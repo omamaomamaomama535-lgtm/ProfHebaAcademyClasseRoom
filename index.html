@@ -12,11 +12,9 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .hidden-section { display: none; }
         
-        /* تحسين شكل السكرول بار */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
         
-        /* تصميم الجدول الشبكي */
         .schedule-grid {
             display: grid;
             grid-template-columns: 120px repeat(5, minmax(150px, 1fr));
@@ -26,25 +24,10 @@
             border-radius: 0.5rem;
             overflow: hidden;
         }
-        .schedule-cell {
-            background-color: white;
-            padding: 0.75rem;
-            min-height: 80px;
-        }
-        .schedule-header {
-            background-color: #f1f5f9;
-            font-weight: bold;
-            text-align: center;
-            padding: 0.75rem;
-        }
-        .day-header {
-            background-color: #e0e7ff;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* لتجاوب الجدول على الشاشات الصغيرة */
+        .schedule-cell { background-color: white; padding: 0.75rem; min-height: 80px; }
+        .schedule-header { background-color: #f1f5f9; font-weight: bold; text-align: center; padding: 0.75rem; }
+        .day-header { background-color: #e0e7ff; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        
         @media (max-width: 768px) {
             .schedule-grid { display: block; overflow-x: auto; white-space: nowrap; }
             .schedule-row { display: flex; border-bottom: 1px solid #e2e8f0; }
@@ -54,7 +37,7 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- ================= شاشة تسجيل الدخول ================= -->
+    <!-- شاشة الدخول -->
     <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 to-blue-800 p-4">
         <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md text-center">
             <div class="bg-blue-100 w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 shadow-inner">
@@ -69,7 +52,6 @@
             </div>
             <div class="g_id_signin flex justify-center mb-6" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
 
-            <!-- أزرار التجربة السريعة -->
             <div class="relative flex py-4 items-center">
                 <div class="flex-grow border-t border-gray-200"></div>
                 <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">تخطي وتسجيل دخول تجريبي</span>
@@ -84,10 +66,9 @@
         </div>
     </div>
 
-    <!-- ================= المنصة الرئيسية ================= -->
+    <!-- المنصة الرئيسية -->
     <div id="main-dashboard" class="hidden-section min-h-screen flex flex-col md:flex-row">
         
-        <!-- القائمة الجانبية (Sidebar) -->
         <aside class="bg-slate-900 text-white w-full md:w-64 flex-shrink-0 shadow-xl z-10 md:min-h-screen flex flex-col transition-all">
             <div class="p-6 text-center border-b border-slate-700">
                 <i class="fas fa-user-circle text-5xl mb-3 text-slate-300"></i>
@@ -97,9 +78,7 @@
             </div>
             
             <div class="flex-grow py-4">
-                <ul id="sidebar-menu" class="space-y-1">
-                    <!-- سيتم تعبئة الأزرار ديناميكياً بناءً على الصلاحية -->
-                </ul>
+                <ul id="sidebar-menu" class="space-y-1"></ul>
             </div>
             
             <div class="p-4 border-t border-slate-700">
@@ -109,10 +88,9 @@
             </div>
         </aside>
 
-        <!-- محتوى لوحة التحكم (Main Content) -->
         <main class="flex-grow p-4 md:p-8 w-full overflow-y-auto bg-slate-50">
             
-            <!-- ====== قسم إدارة النظام (للمدير فقط) ====== -->
+            <!-- قسم الإدارة -->
             <div id="section-admin" class="hidden-section space-y-6 max-w-6xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="bg-slate-800 p-4 text-white flex justify-between items-center">
@@ -123,48 +101,43 @@
                             <h3 class="font-bold text-slate-700 mb-4 border-b pb-2"><i class="fas fa-plus-circle ml-2 text-green-600"></i>إضافة مستخدم جديد</h3>
                             <div class="flex flex-col md:flex-row gap-4 items-end">
                                 <div class="flex-grow w-full">
-                                    <label class="text-sm font-bold text-slate-600 mb-1 block">الاسم الكامل</label>
-                                    <input type="text" id="add-user-name" placeholder="مثال: المعلم محمود" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500 bg-white">
+                                    <label class="text-sm font-bold text-slate-600 mb-1 block">الاسم</label>
+                                    <input type="text" id="add-user-name" class="border border-slate-300 p-2.5 rounded w-full bg-white">
                                 </div>
                                 <div class="flex-grow w-full">
-                                    <label class="text-sm font-bold text-slate-600 mb-1 block">البريد الإلكتروني (Gmail)</label>
-                                    <input type="email" id="add-user-email" placeholder="example@gmail.com" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500 text-left bg-white" dir="ltr">
+                                    <label class="text-sm font-bold text-slate-600 mb-1 block">الإيميل</label>
+                                    <input type="email" id="add-user-email" class="border border-slate-300 p-2.5 rounded w-full bg-white" dir="ltr">
                                 </div>
                                 <div class="w-full md:w-1/4">
-                                    <label class="text-sm font-bold text-slate-600 mb-1 block">تحديد الصلاحية</label>
-                                    <select id="add-user-role" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500 bg-white">
+                                    <label class="text-sm font-bold text-slate-600 mb-1 block">الصلاحية</label>
+                                    <select id="add-user-role" class="border border-slate-300 p-2.5 rounded w-full bg-white">
                                         <option value="student">طالب</option>
                                         <option value="teacher">معلم</option>
-                                        <option value="admin">مدير (صلاحيات كاملة)</option>
+                                        <option value="admin">مدير</option>
                                     </select>
                                 </div>
-                                <button onclick="addUserToSystem()" class="bg-red-600 text-white font-bold py-2.5 px-6 rounded hover:bg-red-700 transition shadow w-full md:w-auto">
-                                    اعتماد الإضافة
-                                </button>
+                                <button onclick="addUserToSystem()" class="bg-red-600 text-white font-bold py-2.5 px-6 rounded hover:bg-red-700 w-full md:w-auto">اعتماد</button>
                             </div>
                         </div>
 
-                        <h3 class="font-bold text-lg mb-4 text-slate-700"><i class="fas fa-list ml-2"></i>قائمة المستخدمين المصرح لهم</h3>
                         <div class="overflow-x-auto border rounded-lg">
                             <table class="min-w-full text-sm text-right">
                                 <thead class="bg-slate-100 text-slate-600">
                                     <tr>
                                         <th class="p-3 border-b">الاسم</th>
-                                        <th class="p-3 border-b">البريد الإلكتروني</th>
-                                        <th class="p-3 border-b">نوع الحساب</th>
-                                        <th class="p-3 border-b text-center">إجراءات</th>
+                                        <th class="p-3 border-b">الإيميل</th>
+                                        <th class="p-3 border-b">الحساب</th>
+                                        <th class="p-3 border-b text-center">إجراء</th>
                                     </tr>
                                 </thead>
-                                <tbody id="admin-users-list" class="bg-white">
-                                    <!-- قائمة المستخدمين -->
-                                </tbody>
+                                <tbody id="admin-users-list" class="bg-white"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ====== قسم إدارة الواجبات (للمدير والمعلم) ====== -->
+            <!-- قسم الواجبات -->
             <div id="section-homework" class="hidden-section space-y-6 max-w-6xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
                     <div class="bg-blue-600 p-4 text-white">
@@ -172,186 +145,136 @@
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div class="md:col-span-2">
-                            <label class="text-sm font-bold text-slate-700 mb-1 block">عنوان الواجب / المهمة</label>
-                            <input type="text" id="hw-title" placeholder="مثال: حل تمارين الوحدة الأولى" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-blue-500">
+                            <label class="text-sm font-bold text-slate-700 mb-1 block">العنوان</label>
+                            <input type="text" id="hw-title" class="border border-slate-300 p-2.5 rounded w-full">
                         </div>
                         <div>
-                            <label class="text-sm font-bold text-slate-700 mb-1 block">آخر موعد للتسليم</label>
-                            <input type="date" id="hw-date" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-blue-500">
+                            <label class="text-sm font-bold text-slate-700 mb-1 block">تاريخ التسليم</label>
+                            <input type="date" id="hw-date" class="border border-slate-300 p-2.5 rounded w-full">
                         </div>
                         <div class="md:col-span-3">
-                            <label class="text-sm font-bold text-slate-700 mb-1 block">المادة والصف المستهدف</label>
-                            <select id="hw-subject" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-blue-500 bg-white">
-                                <option value="">-- اختر من القائمة الشاملة --</option>
-                                <optgroup label="المرحلة الابتدائية (1 إلى 6)">
+                            <label class="text-sm font-bold text-slate-700 mb-1 block">المادة والصف</label>
+                            <select id="hw-subject" class="border border-slate-300 p-2.5 rounded w-full bg-white">
+                                <option value="">-- اختر المادة --</option>
+                                <optgroup label="المرحلة الابتدائية">
                                     <option value="لغة عربية - ابتدائي">لغة عربية - ابتدائي</option>
                                     <option value="رياضيات - ابتدائي">رياضيات - ابتدائي</option>
-                                    <option value="علوم - ابتدائي">علوم - ابتدائي</option>
-                                    <option value="لغة إنجليزية - ابتدائي">لغة إنجليزية - ابتدائي</option>
-                                    <option value="تربية إسلامية - ابتدائي">تربية إسلامية - ابتدائي</option>
                                 </optgroup>
-                                <optgroup label="المرحلة الإعدادية (1 إلى 3)">
+                                <optgroup label="المرحلة الإعدادية">
                                     <option value="لغة عربية - إعدادي">لغة عربية - إعدادي</option>
-                                    <option value="جبر وهندسة - إعدادي">جبر وهندسة - إعدادي</option>
                                     <option value="علوم - إعدادي">علوم - إعدادي</option>
-                                    <option value="دراسات اجتماعية - إعدادي">دراسات اجتماعية - إعدادي</option>
                                 </optgroup>
-                                <optgroup label="المرحلة الثانوية (1 إلى 5/3)">
+                                <optgroup label="المرحلة الثانوية">
                                     <option value="لغة عربية - ثانوي">لغة عربية - ثانوي</option>
-                                    <option value="رياضيات (تفاضل/تكامل) - ثانوي">رياضيات (تفاضل/تكامل) - ثانوي</option>
                                     <option value="فيزياء - ثانوي">فيزياء - ثانوي</option>
-                                    <option value="كيمياء - ثانوي">كيمياء - ثانوي</option>
-                                    <option value="أحياء - ثانوي">أحياء - ثانوي</option>
-                                    <option value="تاريخ/جغرافيا - ثانوي">تاريخ/جغرافيا - ثانوي</option>
-                                    <option value="فلسفة/منطق - ثانوي">فلسفة/منطق - ثانوي</option>
                                 </optgroup>
                             </select>
                         </div>
                         <div class="md:col-span-3">
-                            <label class="text-sm font-bold text-slate-700 mb-1 block">تفاصيل الواجب والتعليمات للطلاب</label>
-                            <textarea id="hw-desc" rows="4" class="border border-slate-300 p-2.5 rounded w-full focus:outline-none focus:border-blue-500"></textarea>
+                            <label class="text-sm font-bold text-slate-700 mb-1 block">التفاصيل</label>
+                            <textarea id="hw-desc" rows="4" class="border border-slate-300 p-2.5 rounded w-full"></textarea>
                         </div>
-                        <div class="md:col-span-3 flex justify-end mt-2">
-                            <button onclick="addHomework()" class="bg-blue-600 text-white font-bold py-2.5 px-8 rounded shadow-md hover:bg-blue-700 transition">
-                                <i class="fas fa-paper-plane ml-2"></i> نشر الواجب
-                            </button>
+                        <div class="md:col-span-3 flex justify-end">
+                            <button onclick="addHomework()" class="bg-blue-600 text-white font-bold py-2.5 px-8 rounded hover:bg-blue-700">نشر</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ====== قسم إدارة الجدول (للمدير والمعلم) ====== -->
+            <!-- قسم الجدول -->
             <div id="section-manage-schedule" class="hidden-section space-y-6 max-w-6xl mx-auto">
                 <div class="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden">
                     <div class="bg-purple-600 p-4 text-white">
-                        <h2 class="text-xl font-bold"><i class="fas fa-calendar-alt ml-2"></i>تعديل الجدول المدرسي الأسبوعي</h2>
+                        <h2 class="text-xl font-bold"><i class="fas fa-calendar-alt ml-2"></i>تعديل الجدول</h2>
                     </div>
-                    
                     <div class="p-6">
-                        <!-- أداة إضافة حصة للجدول -->
-                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-6">
-                            <h3 class="font-bold text-purple-800 mb-3"><i class="fas fa-plus ml-1"></i> حجز حصة في الجدول</h3>
-                            <div class="flex flex-col md:flex-row gap-4 items-end">
-                                <div class="w-full md:w-1/5">
-                                    <label class="text-sm font-bold text-slate-700 mb-1 block">اليوم</label>
-                                    <select id="sch-day" class="border border-slate-300 p-2 rounded w-full bg-white">
-                                        <option value="السبت">السبت</option>
-                                        <option value="الأحد">الأحد</option>
-                                        <option value="الإثنين">الإثنين</option>
-                                        <option value="الثلاثاء">الثلاثاء</option>
-                                        <option value="الأربعاء">الأربعاء</option>
-                                        <option value="الخميس">الخميس</option>
-                                    </select>
-                                </div>
-                                <div class="w-full md:w-1/5">
-                                    <label class="text-sm font-bold text-slate-700 mb-1 block">رقم الحصة / الموعد</label>
-                                    <select id="sch-slot" class="border border-slate-300 p-2 rounded w-full bg-white">
-                                        <option value="slot1">الحصة 1 (08:00 - 08:45)</option>
-                                        <option value="slot2">الحصة 2 (08:45 - 09:30)</option>
-                                        <option value="slot3">الحصة 3 (09:45 - 10:30)</option>
-                                        <option value="slot4">الحصة 4 (10:30 - 11:15)</option>
-                                        <option value="slot5">الحصة 5 (11:30 - 12:15)</option>
-                                    </select>
-                                </div>
-                                <div class="w-full md:w-2/5">
-                                    <label class="text-sm font-bold text-slate-700 mb-1 block">المادة والصف (والمعلم)</label>
-                                    <input type="text" id="sch-subject" placeholder="مثال: رياضيات 1ث (أ. أحمد)" class="border border-slate-300 p-2 rounded w-full">
-                                </div>
-                                <button onclick="addScheduleSlot()" class="bg-purple-600 text-white font-bold py-2 px-6 rounded shadow hover:bg-purple-700 transition w-full md:w-auto">
-                                    تثبيت في الجدول
-                                </button>
-                                <button onclick="clearSchedule()" class="bg-red-100 text-red-600 font-bold py-2 px-4 rounded hover:bg-red-200 transition w-full md:w-auto text-sm border border-red-200">
-                                    مسح الجدول كاملاً
-                                </button>
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-6 flex flex-col md:flex-row gap-4 items-end">
+                            <div class="w-full md:w-1/5">
+                                <label class="text-sm font-bold text-slate-700 mb-1 block">اليوم</label>
+                                <select id="sch-day" class="border border-slate-300 p-2 rounded w-full bg-white">
+                                    <option value="السبت">السبت</option><option value="الأحد">الأحد</option>
+                                    <option value="الإثنين">الإثنين</option><option value="الثلاثاء">الثلاثاء</option>
+                                    <option value="الأربعاء">الأربعاء</option><option value="الخميس">الخميس</option>
+                                </select>
                             </div>
+                            <div class="w-full md:w-1/5">
+                                <label class="text-sm font-bold text-slate-700 mb-1 block">الحصة</label>
+                                <select id="sch-slot" class="border border-slate-300 p-2 rounded w-full bg-white">
+                                    <option value="slot1">الحصة 1</option><option value="slot2">الحصة 2</option>
+                                    <option value="slot3">الحصة 3</option><option value="slot4">الحصة 4</option>
+                                    <option value="slot5">الحصة 5</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-2/5">
+                                <label class="text-sm font-bold text-slate-700 mb-1 block">المادة (مثال: رياضيات 1ث)</label>
+                                <input type="text" id="sch-subject" class="border border-slate-300 p-2 rounded w-full">
+                            </div>
+                            <button onclick="addScheduleSlot()" class="bg-purple-600 text-white font-bold py-2 px-6 rounded hover:bg-purple-700">تثبيت</button>
+                            <button onclick="clearSchedule()" class="bg-red-100 text-red-600 font-bold py-2 px-4 rounded hover:bg-red-200">مسح</button>
                         </div>
-
-                        <!-- عرض الجدول الشبكي الموحد (يظهر هنا للإدارة ويظهر للطالب أيضاً) -->
-                        <div id="unified-schedule-container" class="mt-8">
-                            <!-- سيتم رسم الجدول هنا -->
-                        </div>
+                        <div id="unified-schedule-container" class="mt-8"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- ====== قسم عرض الطالب (الواجبات والجدول) ====== -->
+            <!-- عرض الطالب -->
             <div id="section-student-dashboard" class="hidden-section space-y-8 max-w-6xl mx-auto">
-                
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-indigo-200 pb-2"><i class="fas fa-table ml-2 text-indigo-600"></i>جدول الحصص الأسبوعي</h2>
-                    <div id="student-schedule-view" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                        <!-- سيتم رسم نفس الجدول الشبكي هنا -->
-                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-indigo-200 pb-2">جدول الحصص</h2>
+                    <div id="student-schedule-view" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200"></div>
                 </div>
-
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-green-200 pb-2"><i class="fas fa-book-open ml-2 text-green-600"></i>الواجبات والمهام المطلوبة</h2>
-                    <div id="student-hw-list" class="space-y-4">
-                        <!-- سيتم إضافة الواجبات هنا -->
-                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-green-200 pb-2">الواجبات</h2>
+                    <div id="student-hw-list" class="space-y-4"></div>
                 </div>
             </div>
-
         </main>
     </div>
 
-    <!-- ================= نافذة تسليم الواجب (Modal) للطالب ================= -->
-    <div id="submit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-75 hidden flex items-center justify-center z-50 p-4 transition-opacity">
+    <!-- نافذة التسليم -->
+    <div id="submit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-75 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
             <div class="bg-green-600 p-4 text-white flex justify-between items-center">
-                <h3 class="text-lg font-bold"><i class="fas fa-upload ml-2"></i>تسليم الواجب</h3>
+                <h3 class="text-lg font-bold">تسليم الواجب</h3>
                 <button onclick="closeModal()" class="text-white hover:text-green-200 text-xl"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-6 space-y-4">
-                <p id="modal-hw-title" class="text-slate-700 font-semibold text-sm bg-green-50 p-3 rounded border border-green-100"></p>
-                
+                <p id="modal-hw-title" class="text-slate-700 font-bold text-sm bg-green-50 p-3 rounded"></p>
                 <div>
-                    <label class="block font-bold text-slate-700 mb-2 text-sm">إجابة نصية / ملاحظات للمعلم:</label>
-                    <textarea id="submit-text" class="border border-slate-300 w-full p-3 rounded focus:outline-none focus:border-green-500" rows="3" placeholder="اكتب إجابتك أو استفسارك هنا..."></textarea>
+                    <label class="block font-bold mb-2 text-sm">ملاحظات:</label>
+                    <textarea id="submit-text" class="border w-full p-3 rounded" rows="3"></textarea>
                 </div>
-                
                 <div>
-                    <label class="block font-bold text-slate-700 mb-2 text-sm">إرفاق ملف (صورة الواجب، PDF، Word):</label>
-                    <input type="file" id="submit-file" class="border border-slate-300 w-full p-2 rounded bg-slate-50 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-800 hover:file:bg-green-200" 
-                           accept=".pdf, .doc, .docx, image/png, image/jpeg, image/jpg">
+                    <label class="block font-bold mb-2 text-sm">إرفاق ملف:</label>
+                    <input type="file" id="submit-file" class="border w-full p-2 rounded">
                 </div>
-
-                <div class="mt-6 pt-4 border-t border-slate-100">
-                    <button onclick="confirmSubmission()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 shadow-md transition text-lg">
-                        تأكيد التسليم
-                    </button>
-                </div>
+                <button onclick="confirmSubmission()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg mt-4">تأكيد التسليم</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- البيانات المحلية ---
         let homeworks = JSON.parse(localStorage.getItem('homeworks')) || [];
-        // هيكل الجدول الجديد (يخزن كل خلية بناءً على اليوم ورقم الحصة)
         let scheduleGridData = JSON.parse(localStorage.getItem('scheduleGrid')) || {};
         let allowedUsers = JSON.parse(localStorage.getItem('allowedUsers')) || [];
-        
         let currentUser = null;
         let currentHomeworkIdToSubmit = null;
 
         const daysList = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
         const slotsList = [
-            { id: 'slot1', name: 'الحصة 1', time: '08:00 - 08:45' },
-            { id: 'slot2', name: 'الحصة 2', time: '08:45 - 09:30' },
-            { id: 'slot3', name: 'الحصة 3', time: '09:45 - 10:30' },
-            { id: 'slot4', name: 'الحصة 4', time: '10:30 - 11:15' },
-            { id: 'slot5', name: 'الحصة 5', time: '11:30 - 12:15' }
+            { id: 'slot1', name: 'الحصة 1', time: '08:00' },
+            { id: 'slot2', name: 'الحصة 2', time: '08:45' },
+            { id: 'slot3', name: 'الحصة 3', time: '09:45' },
+            { id: 'slot4', name: 'الحصة 4', time: '10:30' },
+            { id: 'slot5', name: 'الحصة 5', time: '11:30' }
         ];
 
-        // --- نظام تسجيل الدخول ---
-        function parseJwt (token) {
+        function parseJwt(token) {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
+            }).join('')));
         }
 
         function handleGoogleLogin(response) {
@@ -360,7 +283,7 @@
             const userName = payload.name;
 
             if (allowedUsers.length === 0) {
-                alert("أهلاً بك! تم تعيينك كمدير للمنصة بصلاحيات كاملة.");
+                alert("أهلاً بك! تم تعيينك كمدير.");
                 allowedUsers.push({ email: userEmail, name: userName, role: 'admin' });
                 localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
                 loginAs('admin', userName, userEmail);
@@ -368,39 +291,23 @@
             }
 
             const registeredUser = allowedUsers.find(u => u.email === userEmail);
-            if (registeredUser) {
-                loginAs(registeredUser.role, registeredUser.name || userName, userEmail);
-            } else {
-                alert("عفواً، حسابك غير مسرح. راجع إدارة المدرسة.");
-            }
+            if (registeredUser) loginAs(registeredUser.role, registeredUser.name || userName, userEmail);
+            else alert("حسابك غير مسرح.");
         }
 
-        // --- إدارة الصلاحيات والتنقل ---
         function loginAs(role, name, email) {
             currentUser = { role, name, email };
-            
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
-            
             document.getElementById('user-name-display').innerText = name;
-            document.getElementById('user-email-display').innerText = email;
-
-            // إعداد بادج الصلاحية
-            let badgeClass, badgeText;
-            if(role === 'admin') { badgeClass = 'bg-red-500 text-white'; badgeText = 'المدير العام'; }
-            else if(role === 'teacher') { badgeClass = 'bg-blue-500 text-white'; badgeText = 'معلم'; }
-            else { badgeClass = 'bg-green-500 text-white'; badgeText = 'طالب'; }
             
-            let badge = document.getElementById('user-role-badge');
-            badge.className = `inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold ${badgeClass}`;
-            badge.innerText = badgeText;
+            let badgeClass = role === 'admin' ? 'bg-red-500' : (role === 'teacher' ? 'bg-blue-500' : 'bg-green-500');
+            let badgeText = role === 'admin' ? 'مدير' : (role === 'teacher' ? 'معلم' : 'طالب');
+            document.getElementById('user-role-badge').className = `inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold text-white ${badgeClass}`;
+            document.getElementById('user-role-badge').innerText = badgeText;
 
             buildSidebarMenu();
-            
-            // فتح القسم الافتراضي حسب الصلاحية
-            if(role === 'admin') showSection('section-admin');
-            else if(role === 'teacher') showSection('section-homework');
-            else showSection('section-student-dashboard');
+            showSection(role === 'admin' ? 'section-admin' : (role === 'teacher' ? 'section-homework' : 'section-student-dashboard'));
         }
 
         function logout() {
@@ -409,248 +316,103 @@
             document.getElementById('login-screen').style.display = 'flex';
         }
 
-        // بناء القائمة الجانبية بناءً على الصلاحيات
         function buildSidebarMenu() {
             const menu = document.getElementById('sidebar-menu');
             menu.innerHTML = '';
+            const btn = (icon, text, target) => `<li><button onclick="showSection('${target}')" class="w-full text-right px-6 py-3 text-slate-300 hover:bg-slate-800 transition"><i class="fas ${icon}"></i> ${text}</button></li>`;
             
-            const createBtn = (id, icon, text, targetSection) => `
-                <li>
-                    <button onclick="showSection('${targetSection}')" id="btn-${targetSection}" class="sidebar-btn w-full text-right px-6 py-3 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-r-4 hover:border-blue-500 transition font-semibold flex items-center gap-3">
-                        <i class="fas ${icon} w-5 text-center"></i> ${text}
-                    </button>
-                </li>
-            `;
-
-            if(currentUser.role === 'admin') {
-                menu.innerHTML += createBtn('menu-admin', 'fa-cogs', 'إدارة المنصة', 'section-admin');
+            if(currentUser.role === 'admin') menu.innerHTML += btn('fa-cogs', 'الإدارة', 'section-admin');
+            if(['admin', 'teacher'].includes(currentUser.role)) {
+                menu.innerHTML += btn('fa-edit', 'الواجبات', 'section-homework') + btn('fa-calendar', 'الجدول', 'section-manage-schedule');
             }
-            
-            // المدير والمعلم يريان هذه القوائم
-            if(currentUser.role === 'admin' || currentUser.role === 'teacher') {
-                menu.innerHTML += createBtn('menu-hw', 'fa-edit', 'نشر الواجبات', 'section-homework');
-                menu.innerHTML += createBtn('menu-sch', 'fa-calendar-alt', 'تعديل الجدول', 'section-manage-schedule');
-            }
-
-            // الطالب يرى هذه القائمة
-            if(currentUser.role === 'student') {
-                menu.innerHTML += createBtn('menu-student', 'fa-user-graduate', 'لوحة الطالب', 'section-student-dashboard');
-            }
+            if(currentUser.role === 'student') menu.innerHTML += btn('fa-user-graduate', 'لوحتي', 'section-student-dashboard');
         }
 
         function showSection(sectionId) {
-            // إخفاء كل الأقسام
             document.querySelectorAll('.hidden-section').forEach(el => el.style.display = 'none');
-            // إظهار القسم المطلوب
             document.getElementById(sectionId).style.display = 'block';
-
-            // تفعيل لون الزر في القائمة الجانبية
-            document.querySelectorAll('.sidebar-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white', 'border-r-4', 'border-blue-500');
-                btn.classList.add('text-slate-300');
-            });
-            let activeBtn = document.getElementById(`btn-${sectionId}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-slate-300');
-                activeBtn.classList.add('bg-slate-800', 'text-white', 'border-r-4', 'border-blue-500');
-            }
-
-            // تحديث البيانات المعروضة عند فتح القسم
             if(sectionId === 'section-admin') renderAdminView();
-            if(sectionId === 'section-manage-schedule') renderScheduleGrid('unified-schedule-container');
-            if(sectionId === 'section-student-dashboard') {
-                renderStudentHomeworks();
-                renderScheduleGrid('student-schedule-view');
-            }
+            if(sectionId === 'section-manage-schedule' || sectionId === 'section-student-dashboard') renderScheduleGrid(sectionId === 'section-student-dashboard' ? 'student-schedule-view' : 'unified-schedule-container');
+            if(sectionId === 'section-student-dashboard') renderStudentHomeworks();
         }
 
-        // --- وظائف المدير ---
         function addUserToSystem() {
             let name = document.getElementById('add-user-name').value;
             let email = document.getElementById('add-user-email').value.trim().toLowerCase();
             let role = document.getElementById('add-user-role').value;
-
-            if(!name || !email) return alert("يرجى تعبئة الحقول المطلوبة.");
-            if(allowedUsers.find(u => u.email === email)) return alert("هذا البريد مسجل مسبقاً.");
-
-            allowedUsers.push({ email, name, role });
+            if(!name || !email) return;
+            if(!allowedUsers.find(u => u.email === email)) allowedUsers.push({ email, name, role });
             localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
-            
-            document.getElementById('add-user-name').value = '';
-            document.getElementById('add-user-email').value = '';
             renderAdminView();
         }
 
         function removeUser(email) {
-            if(confirm("تأكيد الحذف؟")) {
-                allowedUsers = allowedUsers.filter(u => u.email !== email);
-                localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
-                renderAdminView();
-            }
+            allowedUsers = allowedUsers.filter(u => u.email !== email);
+            localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
+            renderAdminView();
         }
 
         function renderAdminView() {
             let html = '';
             allowedUsers.forEach(u => {
-                let roleName = u.role === 'admin' ? 'مدير' : (u.role === 'teacher' ? 'معلم' : 'طالب');
-                let badgeColor = u.role === 'admin' ? 'bg-red-100 text-red-800 border-red-200' : 
-                               (u.role === 'teacher' ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-green-100 text-green-800 border-green-200');
-                
-                html += `
-                    <tr class="border-b hover:bg-slate-50 transition">
-                        <td class="p-3 font-semibold text-slate-800">${u.name}</td>
-                        <td class="p-3 text-left font-mono text-sm text-slate-600" dir="ltr">${u.email}</td>
-                        <td class="p-3"><span class="px-2 py-1 border rounded text-xs font-bold ${badgeColor}">${roleName}</span></td>
-                        <td class="p-3 text-center">
-                            ${u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="text-red-500 hover:text-red-700 bg-red-50 p-1.5 rounded"><i class="fas fa-trash"></i></button>` : '<span class="text-slate-300">-</span>'}
-                        </td>
-                    </tr>
-                `;
+                html += `<tr class="border-b">
+                    <td class="p-3">${u.name}</td><td class="p-3" dir="ltr">${u.email}</td>
+                    <td class="p-3">${u.role}</td>
+                    <td class="p-3"><button onclick="removeUser('${u.email}')" class="text-red-500">حذف</button></td>
+                </tr>`;
             });
             document.getElementById('admin-users-list').innerHTML = html;
         }
 
-        // --- وظائف الواجبات ---
         function addHomework() {
             let title = document.getElementById('hw-title').value;
-            let subject = document.getElementById('hw-subject').value;
-            let date = document.getElementById('hw-date').value;
-            let desc = document.getElementById('hw-desc').value;
-
-            if(!title || !subject || !date) return alert('الرجاء إكمال البيانات الأساسية للواجب.');
-
-            homeworks.push({ id: Date.now(), title, subject, date, desc, submitted: false });
+            homeworks.push({ id: Date.now(), title, subject: document.getElementById('hw-subject').value, date: document.getElementById('hw-date').value, desc: document.getElementById('hw-desc').value, submitted: false });
             localStorage.setItem('homeworks', JSON.stringify(homeworks));
-            
-            alert('تم نشر الواجب بنجاح!');
-            document.getElementById('hw-title').value = '';
-            document.getElementById('hw-desc').value = '';
+            alert('تم النشر!');
         }
 
-        // --- نظام الجدول الشبكي (Grid) المطور ---
         function addScheduleSlot() {
-            let day = document.getElementById('sch-day').value;
-            let slot = document.getElementById('sch-slot').value;
-            let subject = document.getElementById('sch-subject').value;
-
-            if(!subject) {
-                // إذا ترك الحقل فارغاً يتم مسح الخلية
-                delete scheduleGridData[`${day}-${slot}`];
-            } else {
-                scheduleGridData[`${day}-${slot}`] = subject;
-            }
-            
+            let key = `${document.getElementById('sch-day').value}-${document.getElementById('sch-slot').value}`;
+            let val = document.getElementById('sch-subject').value;
+            if(val) scheduleGridData[key] = val; else delete scheduleGridData[key];
             localStorage.setItem('scheduleGrid', JSON.stringify(scheduleGridData));
-            renderScheduleGrid('unified-schedule-container'); // تحديث المعاينة فوراً
-            document.getElementById('sch-subject').value = '';
+            renderScheduleGrid('unified-schedule-container');
         }
 
-        function clearSchedule() {
-            if(confirm('هل أنت متأكد من مسح جميع بيانات الجدول؟')) {
-                scheduleGridData = {};
-                localStorage.setItem('scheduleGrid', JSON.stringify(scheduleGridData));
-                renderScheduleGrid('unified-schedule-container');
-            }
-        }
+        function clearSchedule() { scheduleGridData = {}; localStorage.setItem('scheduleGrid', JSON.stringify(scheduleGridData)); renderScheduleGrid('unified-schedule-container'); }
 
         function renderScheduleGrid(containerId) {
-            const container = document.getElementById(containerId);
-            if(!container) return;
-
-            let html = '<div class="schedule-grid shadow-sm">';
-            
-            // رأس الجدول (أسماء الحصص والأوقات)
-            html += '<div class="schedule-header bg-slate-200">اليوم / الحصة</div>';
-            slotsList.forEach(slot => {
-                html += `<div class="schedule-header">
-                            <div class="text-sm">${slot.name}</div>
-                            <div class="text-xs font-normal text-slate-500 mt-1 font-mono">${slot.time}</div>
-                         </div>`;
-            });
-
-            // صفوف الأيام
+            let html = '<div class="schedule-grid"><div class="schedule-header">اليوم</div>';
+            slotsList.forEach(s => html += `<div class="schedule-header">${s.name}</div>`);
             daysList.forEach(day => {
-                // خلية اسم اليوم
-                html += `<div class="day-header border-t border-slate-200 text-indigo-900">${day}</div>`;
-                
-                // خلايا الحصص في هذا اليوم
+                html += `<div class="day-header border-t">${day}</div>`;
                 slotsList.forEach(slot => {
-                    let cellKey = `${day}-${slot.id}`;
-                    let subjectText = scheduleGridData[cellKey] || ''; // إذا فارغ لا يكتب شيء
-                    
-                    let bgClass = subjectText ? 'bg-white' : 'bg-slate-50';
-                    let textClass = subjectText ? 'font-semibold text-indigo-700' : '';
-                    
-                    html += `
-                        <div class="schedule-cell border-t border-slate-200 flex items-center justify-center text-center ${bgClass}">
-                            <span class="text-sm ${textClass}">${subjectText || '<span class="text-slate-300 text-xs">- فارغ -</span>'}</span>
-                        </div>
-                    `;
+                    let text = scheduleGridData[`${day}-${slot.id}`] || '-';
+                    html += `<div class="schedule-cell border-t text-center text-sm">${text}</div>`;
                 });
             });
-
             html += '</div>';
-            container.innerHTML = html;
+            document.getElementById(containerId).innerHTML = html;
         }
 
-        // --- وظائف عرض وتسليم الطالب ---
         function renderStudentHomeworks() {
-            let hwHtml = '';
-            let sortedHw = [...homeworks].reverse(); 
-            
-            if(sortedHw.length === 0) hwHtml = '<div class="text-center p-8 text-slate-500 bg-slate-50 rounded border border-dashed"><p>لا توجد واجبات حالياً.</p></div>';
-            
-            sortedHw.forEach((hw) => {
-                let statusBadge = hw.submitted ? 
-                    '<span class="text-green-700 bg-green-100 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2"><i class="fas fa-check-circle"></i> تم التسليم</span>' : 
-                    `<button onclick="openSubmitModal(${hw.id}, '${hw.title}')" class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 text-sm font-bold shadow transition flex items-center gap-2"><i class="fas fa-cloud-upload-alt"></i> تسليم الآن</button>`;
-                
-                hwHtml += `
-                    <div class="bg-white border ${hw.submitted ? 'border-green-200' : 'border-slate-200 border-r-4 border-r-indigo-500'} p-5 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div class="w-full">
-                            <div class="flex flex-wrap gap-2 items-center mb-2">
-                                <h3 class="font-bold text-lg text-slate-800">${hw.title}</h3>
-                                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-semibold">${hw.subject}</span>
-                            </div>
-                            <p class="text-slate-600 text-sm mb-3">${hw.desc}</p>
-                            <div class="text-xs text-slate-500 font-bold"><i class="far fa-clock"></i> التسليم: ${hw.date}</div>
-                        </div>
-                        <div class="flex-shrink-0 mt-2 md:mt-0">
-                            ${statusBadge}
-                        </div>
-                    </div>
-                `;
+            let html = '';
+            homeworks.reverse().forEach(hw => {
+                let btn = hw.submitted ? '<span class="text-green-600 font-bold">تم التسليم</span>' : `<button onclick="openSubmitModal(${hw.id}, '${hw.title}')" class="bg-indigo-600 text-white px-4 py-2 rounded">تسليم</button>`;
+                html += `<div class="bg-white border p-4 rounded shadow mb-4 flex justify-between">
+                    <div><h3 class="font-bold">${hw.title}</h3><p class="text-sm">${hw.desc}</p></div>
+                    <div>${btn}</div>
+                </div>`;
             });
-            document.getElementById('student-hw-list').innerHTML = hwHtml;
+            document.getElementById('student-hw-list').innerHTML = html;
         }
 
-        function openSubmitModal(id, title) {
-            currentHomeworkIdToSubmit = id;
-            document.getElementById('modal-hw-title').innerText = "المهمة: " + title;
-            document.getElementById('submit-text').value = '';
-            document.getElementById('submit-file').value = '';
-            document.getElementById('submit-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('submit-modal').classList.add('hidden');
-        }
-
+        function openSubmitModal(id, title) { currentHomeworkIdToSubmit = id; document.getElementById('modal-hw-title').innerText = title; document.getElementById('submit-modal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('submit-modal').classList.add('hidden'); }
         function confirmSubmission() {
-            let text = document.getElementById('submit-text').value;
-            let fileInput = document.getElementById('submit-file');
-            
-            if(!text && fileInput.files.length === 0) return alert("أضف إجابة أو ارفع ملفاً!");
-
-            let hwIndex = homeworks.findIndex(h => h.id === currentHomeworkIdToSubmit);
-            if(hwIndex > -1) {
-                homeworks[hwIndex].submitted = true;
-                localStorage.setItem('homeworks', JSON.stringify(homeworks));
-            }
-
-            alert("تم تسليم الواجب بنجاح!");
-            closeModal();
-            renderStudentHomeworks();
+            let idx = homeworks.findIndex(h => h.id === currentHomeworkIdToSubmit);
+            if(idx > -1) { homeworks[idx].submitted = true; localStorage.setItem('homeworks', JSON.stringify(homeworks)); }
+            closeModal(); renderStudentHomeworks();
         }
     </script>
 </body>
