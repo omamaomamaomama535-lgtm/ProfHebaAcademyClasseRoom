@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصتي التعليمية الاحترافية</title>
-    <!-- استخدام Tailwind CSS للتصميم -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة جوجل لتسجيل الدخول -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- أيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -25,7 +22,7 @@
             <h1 class="text-3xl font-bold mb-2">منصتي التعليمية</h1>
             <p class="text-gray-500 mb-8">سجل دخولك للمتابعة</p>
             
-            <!-- زر تسجيل دخول جوجل الحقيقي (يحتاج Client ID) -->
+            <!-- زر تسجيل دخول جوجل الحقيقي مضاف إليه Client ID الخاص بك -->
             <div id="g_id_onload"
                  data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com"
                  data-callback="handleGoogleLogin">
@@ -51,10 +48,10 @@
 
     <!-- المنصة الرئيسية (تظهر بعد تسجيل الدخول) -->
     <div id="main-dashboard" class="hidden-section min-h-screen">
-        <!-- الشريط العلوي -->
         <nav class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
             <div class="text-xl font-bold"><i class="fas fa-school ml-2"></i>المنصة التعليمية</div>
             <div class="flex items-center gap-4">
+                <span id="user-name-display" class="font-semibold text-sm"></span>
                 <span id="user-role-badge" class="bg-yellow-500 text-blue-900 px-3 py-1 rounded-full font-bold text-sm"></span>
                 <button onclick="logout()" class="hover:text-red-300 transition"><i class="fas fa-sign-out-alt ml-1"></i>خروج</button>
             </div>
@@ -65,13 +62,11 @@
             <!-- ================= واجهة المعلم ================= -->
             <div id="teacher-view" class="hidden-section space-y-8">
                 
-                <!-- إضافة واجب جديد -->
                 <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
                     <h2 class="text-2xl font-bold mb-4 text-blue-700"><i class="fas fa-tasks ml-2"></i>إضافة واجب جديد</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input type="text" id="hw-title" placeholder="عنوان الواجب" class="border p-2 rounded w-full">
                         
-                        <!-- قائمة المواد -->
                         <select id="hw-subject" class="border p-2 rounded w-full">
                             <option value="">-- اختر المادة --</option>
                             <option value="اللغة العربية">اللغة العربية</option>
@@ -82,7 +77,6 @@
                             <option value="الحاسب الآلي">الحاسب الآلي</option>
                         </select>
                         
-                        <!-- منتقي التاريخ (Calendar) -->
                         <div class="flex flex-col">
                             <label class="text-sm text-gray-600 mb-1">تاريخ التسليم:</label>
                             <input type="date" id="hw-date" class="border p-2 rounded w-full">
@@ -96,11 +90,9 @@
                     </div>
                 </div>
 
-                <!-- إضافة حصة للجدول -->
                 <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
                     <h2 class="text-2xl font-bold mb-4 text-purple-700"><i class="fas fa-calendar-alt ml-2"></i>تحديث الجدول الدراسي</h2>
                     <div class="flex flex-wrap gap-4 items-end">
-                        <!-- قائمة الأيام -->
                         <div class="w-full md:w-1/4">
                             <label class="text-sm text-gray-600 mb-1">اليوم:</label>
                             <select id="sch-day" class="border p-2 rounded w-full">
@@ -129,15 +121,13 @@
             <!-- ================= واجهة الطالب ================= -->
             <div id="student-view" class="hidden-section space-y-8">
                 
-                <!-- الواجبات المطلوبة -->
                 <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
                     <h2 class="text-2xl font-bold mb-4 text-green-700"><i class="fas fa-book-open ml-2"></i>الواجبات المطلوبة</h2>
                     <div id="student-hw-list" class="space-y-4">
-                        <!-- سيتم إضافة الواجبات هنا برمجياً -->
+                        <!-- سيتم إضافة الواجبات هنا -->
                     </div>
                 </div>
 
-                <!-- الجدول الدراسي -->
                 <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
                     <h2 class="text-2xl font-bold mb-4 text-indigo-700"><i class="fas fa-table ml-2"></i>الجدول الدراسي الأسبوعي</h2>
                     <div class="overflow-x-auto">
@@ -167,13 +157,11 @@
             <p id="modal-hw-title" class="text-gray-600 mb-4 text-sm"></p>
             
             <div class="space-y-4">
-                <!-- إرسال نص -->
                 <div>
                     <label class="block font-bold mb-1">رسالة لمعلمك (اختياري):</label>
                     <textarea id="submit-text" class="border w-full p-2 rounded" rows="3" placeholder="اكتب إجابتك أو ملاحظاتك هنا..."></textarea>
                 </div>
                 
-                <!-- رفع الملفات مدعوم لكل الصيغ المطلوبة -->
                 <div>
                     <label class="block font-bold mb-1">إرفاق ملف (صور، PDF، Word):</label>
                     <input type="file" id="submit-file" class="border w-full p-2 rounded bg-gray-50" 
@@ -190,12 +178,35 @@
     </div>
 
     <script>
-        // قواعد البيانات الوهمية (تحفظ في المتصفح)
         let homeworks = JSON.parse(localStorage.getItem('homeworks')) || [];
         let schedule = JSON.parse(localStorage.getItem('schedule')) || [];
         let currentHomeworkIdToSubmit = null;
 
-        // دالة تسجيل الدخول
+        // دالة لفك تشفير بيانات جوجل
+        function parseJwt (token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // تسجيل الدخول الحقيقي بجوجل
+        function handleGoogleLogin(response) {
+            const responsePayload = parseJwt(response.credential);
+            
+            console.log("ID: " + responsePayload.sub);
+            console.log('Full Name: ' + responsePayload.name);
+            console.log('Email: ' + responsePayload.email);
+
+            // إظهار اسم المستخدم
+            document.getElementById('user-name-display').innerText = "مرحباً: " + responsePayload.name;
+            
+            // افتراضياً ندخله كطالب (في تطبيق حقيقي يمكنك تحديد الدور بناءً على الإيميل)
+            login('student');
+        }
+
         function login(role) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'block';
@@ -204,28 +215,27 @@
                 document.getElementById('user-role-badge').innerText = "لوحة المعلم";
                 document.getElementById('teacher-view').style.display = 'block';
                 document.getElementById('student-view').style.display = 'none';
+                if(!document.getElementById('user-name-display').innerText) {
+                     document.getElementById('user-name-display').innerText = "المعلم";
+                }
             } else {
                 document.getElementById('user-role-badge').innerText = "لوحة الطالب";
                 document.getElementById('teacher-view').style.display = 'none';
                 document.getElementById('student-view').style.display = 'block';
+                if(!document.getElementById('user-name-display').innerText) {
+                     document.getElementById('user-name-display').innerText = "طالب (تجريبي)";
+                }
                 renderStudentView();
             }
         }
 
-        // تسجيل الدخول الحقيقي بجوجل (تعمل إذا وضعت Client ID)
-        function handleGoogleLogin(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            // في تطبيق حقيقي، تقوم بفك تشفير التوكن هنا لمعرفة اسم المستخدم وبريده
-            alert("تم تسجيل الدخول بجوجل بنجاح!");
-            login('student'); // افتراضياً ندخله كطالب للتجربة
-        }
-
         function logout() {
+            // إعادة ضبط الشاشة
             document.getElementById('main-dashboard').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('user-name-display').innerText = '';
         }
 
-        // وظائف المعلم
         function addHomework() {
             let title = document.getElementById('hw-title').value;
             let subject = document.getElementById('hw-subject').value;
@@ -258,9 +268,7 @@
             document.getElementById('sch-subject').value = '';
         }
 
-        // وظائف الطالب
         function renderStudentView() {
-            // عرض الواجبات
             let hwHtml = '';
             if(homeworks.length === 0) hwHtml = '<p class="text-gray-500">لا يوجد واجبات حالياً.</p>';
             homeworks.forEach((hw) => {
@@ -283,7 +291,6 @@
             });
             document.getElementById('student-hw-list').innerHTML = hwHtml;
 
-            // عرض الجدول
             let schHtml = '';
             if(schedule.length === 0) schHtml = '<tr><td colspan="3" class="p-4 text-gray-500">الجدول فارغ</td></tr>';
             schedule.forEach(s => {
@@ -298,7 +305,6 @@
             document.getElementById('student-schedule-list').innerHTML = schHtml;
         }
 
-        // نظام تسليم الواجبات (النافذة المنبثقة)
         function openSubmitModal(id, title) {
             currentHomeworkIdToSubmit = id;
             document.getElementById('modal-hw-title').innerText = "تسليم واجب: " + title;
@@ -321,7 +327,6 @@
                 return;
             }
 
-            // تحديث حالة الواجب في قاعدة البيانات الوهمية
             let hwIndex = homeworks.findIndex(h => h.id === currentHomeworkIdToSubmit);
             if(hwIndex > -1) {
                 homeworks[hwIndex].submitted = true;
@@ -330,7 +335,7 @@
 
             alert("تم تسليم الواجب بنجاح للمدرس!");
             closeModal();
-            renderStudentView(); // تحديث الواجهة لتظهر علامة "تم التسليم"
+            renderStudentView();
         }
     </script>
 </body>
