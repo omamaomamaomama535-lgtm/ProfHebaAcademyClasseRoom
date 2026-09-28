@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصتي التعليمية الاحترافية</title>
+    <!-- استخدام Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة جوجل لتسجيل الدخول -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- أيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .hidden-section { display: none; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-blue-900">
+        <div class="bg-white p-10 rounded-xl shadow-2xl w-full max-w-md text-center">
+            <i class="fas fa-graduation-cap text-6xl text-blue-600 mb-4"></i>
+            <h1 class="text-3xl font-bold mb-2">منصتي التعليمية</h1>
+            <p class="text-gray-500 mb-8">سجل دخولك للمتابعة</p>
+            
+            <!-- زر تسجيل دخول جوجل الحقيقي (يحتاج Client ID) -->
+            <div id="g_id_onload"
+                 data-client_id="ضع_هنا_معرف_جوجل_الخاص_بك_CLIENT_ID"
+                 data-callback="handleGoogleLogin">
+            </div>
+            <div class="g_id_signin flex justify-center mb-4" data-type="standard"></div>
+
+            <div class="relative flex py-5 items-center">
+                <div class="flex-grow border-t border-gray-300"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-400">أو للتجربة المباشرة</span>
+                <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <div class="flex gap-4 justify-center">
+                <button onclick="login('teacher')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2 transition">
+                    دخول كمعلم
+                </button>
+                <button onclick="login('student')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-1/2 transition">
+                    دخول كطالب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- المنصة الرئيسية (تظهر بعد تسجيل الدخول) -->
+    <div id="main-dashboard" class="hidden-section min-h-screen">
+        <!-- الشريط العلوي -->
+        <nav class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
+            <div class="text-xl font-bold"><i class="fas fa-school ml-2"></i>المنصة التعليمية</div>
+            <div class="flex items-center gap-4">
+                <span id="user-role-badge" class="bg-yellow-500 text-blue-900 px-3 py-1 rounded-full font-bold text-sm"></span>
+                <button onclick="logout()" class="hover:text-red-300 transition"><i class="fas fa-sign-out-alt ml-1"></i>خروج</button>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-6 max-w-5xl">
+            
+            <!-- ================= واجهة المعلم ================= -->
+            <div id="teacher-view" class="hidden-section space-y-8">
+                
+                <!-- إضافة واجب جديد -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
+                    <h2 class="text-2xl font-bold mb-4 text-blue-700"><i class="fas fa-tasks ml-2"></i>إضافة واجب جديد</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="hw-title" placeholder="عنوان الواجب" class="border p-2 rounded w-full">
+                        
+                        <!-- قائمة المواد -->
+                        <select id="hw-subject" class="border p-2 rounded w-full">
+                            <option value="">-- اختر المادة --</option>
+                            <option value="اللغة العربية">اللغة العربية</option>
+                            <option value="الرياضيات">الرياضيات</option>
+                            <option value="العلوم">العلوم</option>
+                            <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+                            <option value="التاريخ">التاريخ</option>
+                            <option value="الحاسب الآلي">الحاسب الآلي</option>
+                        </select>
+                        
+                        <!-- منتقي التاريخ (Calendar) -->
+                        <div class="flex flex-col">
+                            <label class="text-sm text-gray-600 mb-1">تاريخ التسليم:</label>
+                            <input type="date" id="hw-date" class="border p-2 rounded w-full">
+                        </div>
+                        
+                        <textarea id="hw-desc" placeholder="تفاصيل الواجب..." class="border p-2 rounded w-full col-span-1 md:col-span-2"></textarea>
+                        
+                        <button onclick="addHomework()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded col-span-1 md:col-span-2 hover:bg-blue-700 transition">
+                            نشر الواجب للطلاب
+                        </button>
+                    </div>
+                </div>
+
+                <!-- إضافة حصة للجدول -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
+                    <h2 class="text-2xl font-bold mb-4 text-purple-700"><i class="fas fa-calendar-alt ml-2"></i>تحديث الجدول الدراسي</h2>
+                    <div class="flex flex-wrap gap-4 items-end">
+                        <!-- قائمة الأيام -->
+                        <div class="w-full md:w-1/4">
+                            <label class="text-sm text-gray-600 mb-1">اليوم:</label>
+                            <select id="sch-day" class="border p-2 rounded w-full">
+                                <option value="الأحد">الأحد</option>
+                                <option value="الإثنين">الإثنين</option>
+                                <option value="الثلاثاء">الثلاثاء</option>
+                                <option value="الأربعاء">الأربعاء</option>
+                                <option value="الخميس">الخميس</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-1/4">
+                            <label class="text-sm text-gray-600 mb-1">المادة:</label>
+                            <input type="text" id="sch-subject" placeholder="مثال: رياضيات" class="border p-2 rounded w-full">
+                        </div>
+                        <div class="w-full md:w-1/4">
+                            <label class="text-sm text-gray-600 mb-1">الوقت:</label>
+                            <input type="time" id="sch-time" class="border p-2 rounded w-full">
+                        </div>
+                        <button onclick="addSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 transition w-full md:w-auto">
+                            إضافة للجدول
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= واجهة الطالب ================= -->
+            <div id="student-view" class="hidden-section space-y-8">
+                
+                <!-- الواجبات المطلوبة -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
+                    <h2 class="text-2xl font-bold mb-4 text-green-700"><i class="fas fa-book-open ml-2"></i>الواجبات المطلوبة</h2>
+                    <div id="student-hw-list" class="space-y-4">
+                        <!-- سيتم إضافة الواجبات هنا برمجياً -->
+                    </div>
+                </div>
+
+                <!-- الجدول الدراسي -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-700"><i class="fas fa-table ml-2"></i>الجدول الدراسي الأسبوعي</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border">
+                            <thead class="bg-indigo-100">
+                                <tr>
+                                    <th class="py-2 px-4 border">اليوم</th>
+                                    <th class="py-2 px-4 border">المادة</th>
+                                    <th class="py-2 px-4 border">الوقت</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-schedule-list" class="text-center">
+                                <!-- سيتم إضافة الجدول هنا -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- نافذة تسليم الواجب (Modal) للطالب -->
+    <div id="submit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg">
+            <h3 class="text-xl font-bold mb-4 border-b pb-2">تسليم الواجب</h3>
+            <p id="modal-hw-title" class="text-gray-600 mb-4 text-sm"></p>
+            
+            <div class="space-y-4">
+                <!-- إرسال نص -->
+                <div>
+                    <label class="block font-bold mb-1">رسالة لمعلمك (اختياري):</label>
+                    <textarea id="submit-text" class="border w-full p-2 rounded" rows="3" placeholder="اكتب إجابتك أو ملاحظاتك هنا..."></textarea>
+                </div>
+                
+                <!-- رفع الملفات مدعوم لكل الصيغ المطلوبة -->
+                <div>
+                    <label class="block font-bold mb-1">إرفاق ملف (صور، PDF، Word):</label>
+                    <input type="file" id="submit-file" class="border w-full p-2 rounded bg-gray-50" 
+                           accept=".pdf, .doc, .docx, image/png, image/jpeg, image/jpg">
+                    <p class="text-xs text-gray-500 mt-1">الصيغ المدعومة: PDF, DOC, DOCX, JPG, PNG</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3 justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">إلغاء</button>
+                <button onclick="confirmSubmission()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">تسليم الآن</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // قواعد البيانات الوهمية (تحفظ في المتصفح)
+        let homeworks = JSON.parse(localStorage.getItem('homeworks')) || [];
+        let schedule = JSON.parse(localStorage.getItem('schedule')) || [];
+        let currentHomeworkIdToSubmit = null;
+
+        // دالة تسجيل الدخول
+        function login(role) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'block';
+            
+            if(role === 'teacher') {
+                document.getElementById('user-role-badge').innerText = "لوحة المعلم";
+                document.getElementById('teacher-view').style.display = 'block';
+                document.getElementById('student-view').style.display = 'none';
+            } else {
+                document.getElementById('user-role-badge').innerText = "لوحة الطالب";
+                document.getElementById('teacher-view').style.display = 'none';
+                document.getElementById('student-view').style.display = 'block';
+                renderStudentView();
+            }
+        }
+
+        // تسجيل الدخول الحقيقي بجوجل (تعمل إذا وضعت Client ID)
+        function handleGoogleLogin(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+            // في تطبيق حقيقي، تقوم بفك تشفير التوكن هنا لمعرفة اسم المستخدم وبريده
+            alert("تم تسجيل الدخول بجوجل بنجاح!");
+            login('student'); // افتراضياً ندخله كطالب للتجربة
+        }
+
+        function logout() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        // وظائف المعلم
+        function addHomework() {
+            let title = document.getElementById('hw-title').value;
+            let subject = document.getElementById('hw-subject').value;
+            let date = document.getElementById('hw-date').value;
+            let desc = document.getElementById('hw-desc').value;
+
+            if(!title || !subject || !date) {
+                alert('يرجى تعبئة العنوان والمادة وتاريخ التسليم!');
+                return;
+            }
+
+            homeworks.push({ id: Date.now(), title, subject, date, desc, submitted: false });
+            localStorage.setItem('homeworks', JSON.stringify(homeworks));
+            
+            alert('تم نشر الواجب للطلاب بنجاح!');
+            document.getElementById('hw-title').value = '';
+            document.getElementById('hw-desc').value = '';
+        }
+
+        function addSchedule() {
+            let day = document.getElementById('sch-day').value;
+            let subject = document.getElementById('sch-subject').value;
+            let time = document.getElementById('sch-time').value;
+
+            if(!subject || !time) return alert('يرجى تعبئة المادة والوقت');
+
+            schedule.push({ day, subject, time });
+            localStorage.setItem('schedule', JSON.stringify(schedule));
+            alert('تم التحديث في الجدول');
+            document.getElementById('sch-subject').value = '';
+        }
+
+        // وظائف الطالب
+        function renderStudentView() {
+            // عرض الواجبات
+            let hwHtml = '';
+            if(homeworks.length === 0) hwHtml = '<p class="text-gray-500">لا يوجد واجبات حالياً.</p>';
+            homeworks.forEach((hw) => {
+                let statusBadge = hw.submitted ? 
+                    '<span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold"><i class="fas fa-check-circle"></i> تم التسليم</span>' : 
+                    `<button onclick="openSubmitModal(${hw.id}, '${hw.title}')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 text-sm font-bold">تسليم الواجب</button>`;
+                
+                hwHtml += `
+                    <div class="border p-4 rounded bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg">${hw.title} <span class="text-sm font-normal text-gray-500">(${hw.subject})</span></h3>
+                            <p class="text-gray-600 text-sm mt-1">${hw.desc}</p>
+                            <p class="text-red-500 text-xs mt-2"><i class="fas fa-clock"></i> آخر موعد: ${hw.date}</p>
+                        </div>
+                        <div>
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('student-hw-list').innerHTML = hwHtml;
+
+            // عرض الجدول
+            let schHtml = '';
+            if(schedule.length === 0) schHtml = '<tr><td colspan="3" class="p-4 text-gray-500">الجدول فارغ</td></tr>';
+            schedule.forEach(s => {
+                schHtml += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-2 px-4 border">${s.day}</td>
+                        <td class="py-2 px-4 border font-bold">${s.subject}</td>
+                        <td class="py-2 px-4 border text-gray-600">${s.time}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('student-schedule-list').innerHTML = schHtml;
+        }
+
+        // نظام تسليم الواجبات (النافذة المنبثقة)
+        function openSubmitModal(id, title) {
+            currentHomeworkIdToSubmit = id;
+            document.getElementById('modal-hw-title').innerText = "تسليم واجب: " + title;
+            document.getElementById('submit-text').value = '';
+            document.getElementById('submit-file').value = '';
+            document.getElementById('submit-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('submit-modal').classList.add('hidden');
+            currentHomeworkIdToSubmit = null;
+        }
+
+        function confirmSubmission() {
+            let text = document.getElementById('submit-text').value;
+            let fileInput = document.getElementById('submit-file');
+            
+            if(!text && fileInput.files.length === 0) {
+                alert("يرجى كتابة نص أو إرفاق ملف على الأقل!");
+                return;
+            }
+
+            // تحديث حالة الواجب في قاعدة البيانات الوهمية
+            let hwIndex = homeworks.findIndex(h => h.id === currentHomeworkIdToSubmit);
+            if(hwIndex > -1) {
+                homeworks[hwIndex].submitted = true;
+                localStorage.setItem('homeworks', JSON.stringify(homeworks));
+            }
+
+            alert("تم تسليم الواجب بنجاح للمدرس!");
+            closeModal();
+            renderStudentView(); // تحديث الواجهة لتظهر علامة "تم التسليم"
+        }
+    </script>
+</body>
+</html>
