@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>منصتي التعليمية المحمولة</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- مكتبة FontAwesome لأيقونات الموبايل -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -23,190 +21,71 @@
             --text-muted: #6b7280;
         }
 
-        * {
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Tajawal', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow-x: hidden;
-            padding-bottom: 80px; /* مساحة للشريط السفلي في الهاتف */
-        }
-
+        * { -webkit-tap-highlight-color: transparent; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; padding-bottom: 80px; }
         .hidden-section { display: none !important; }
 
-        /* تأثيرات النقر للهواتف (Ripple Effect) */
-        .btn-touch {
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-        }
-        .btn-touch:active {
-            transform: scale(0.97);
-        }
+        .btn-touch { transition: transform 0.1s ease, box-shadow 0.1s ease; }
+        .btn-touch:active { transform: scale(0.97); }
 
-        /* الكروت المتجاوبة */
         .mobile-card {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 1.25rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            margin-bottom: 1rem;
-            border: 1px solid #e5e7eb;
+            background: var(--surface); border-radius: 16px; padding: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 1rem; border: 1px solid #e5e7eb;
         }
 
-        /* حقول الإدخال المحسنة للموبايل */
         .mobile-input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            background-color: #f9fafb;
-            font-size: 1rem; /* يمنع الآيفون من عمل Zoom */
-            margin-top: 0.5rem;
-            transition: border-color 0.2s;
+            width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #d1d5db;
+            background-color: #f9fafb; font-size: 1rem; margin-top: 0.5rem; transition: border-color 0.2s;
         }
-        .mobile-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: var(--surface);
-        }
+        .mobile-input:focus { outline: none; border-color: var(--primary); background-color: var(--surface); }
 
-        /* شريط التنقل السفلي للهواتف (Bottom Navigation) */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-around;
-            padding: 0.75rem 0.5rem;
-            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-            z-index: 50;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-around;
+            padding: 0.75rem 0.5rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+            z-index: 50; border-top-left-radius: 20px; border-top-right-radius: 20px;
         }
-
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-weight: 500;
-            width: 25%;
-            transition: color 0.2s;
+            display: flex; flex-direction: column; align-items: center; color: var(--text-muted);
+            font-size: 0.75rem; font-weight: 500; width: 25%; transition: color 0.2s;
         }
-        .nav-item i {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-        .nav-item.active {
-            color: var(--primary);
-        }
-        .nav-item.active i {
-            background-color: #e0e7ff;
-            color: var(--primary-dark);
-        }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 0.25rem; padding: 0.5rem; border-radius: 50%; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active i { background-color: #e0e7ff; color: var(--primary-dark); }
 
-        /* تصميم الجدول القابل للسحب (Swipeable Grid) */
-        .schedule-wrapper {
-            overflow-x: auto;
-            border-radius: 12px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
-            background: white;
-            -webkit-overflow-scrolling: touch; /* سحب ناعم في الآيفون */
-        }
-        .schedule-table {
-            width: 100%;
-            min-width: 600px; /* لضمان القدرة على السحب أفقياً */
-            border-collapse: collapse;
-        }
-        .schedule-table th, .schedule-table td {
-            border: 1px solid #f3f4f6;
-            padding: 1rem 0.5rem;
-            text-align: center;
-        }
+        .schedule-wrapper { overflow-x: auto; border-radius: 12px; background: white; -webkit-overflow-scrolling: touch; }
+        .schedule-table { width: 100%; min-width: 600px; border-collapse: collapse; }
+        .schedule-table th, .schedule-table td { border: 1px solid #f3f4f6; padding: 1rem 0.5rem; text-align: center; }
         .schedule-table th { background-color: #f9fafb; font-weight: 700; color: var(--text-muted); }
         .schedule-cell { font-size: 0.875rem; font-weight: 500; }
         .schedule-cell.filled { background-color: #e0e7ff; color: var(--primary-dark); font-weight: 700; }
         
-        /* النافذة المنبثقة (Modal) المحسنة للموبايل (تفتح من الأسفل) */
         .bottom-sheet-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 100;
-            display: flex;
-            align-items: flex-end; /* ظهور من الأسفل */
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+            display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-        .bottom-sheet-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
         .bottom-sheet-content {
-            background: white;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 2rem 1.5rem;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            background: #f8fafc; width: 100%; max-height: 90vh; overflow-y: auto;
+            border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 2rem 1.5rem;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
         }
-        .bottom-sheet-overlay.active .bottom-sheet-content {
-            transform: translateY(0);
-        }
-        .sheet-handle {
-            width: 40px;
-            height: 5px;
-            background: #e5e7eb;
-            border-radius: 10px;
-            margin: -1rem auto 1.5rem auto;
-        }
+        .bottom-sheet-overlay.active .bottom-sheet-content { transform: translateY(0); }
+        .sheet-handle { width: 40px; height: 5px; background: #cbd5e1; border-radius: 10px; margin: -1rem auto 1.5rem auto; }
 
-        /* الرأس العلوي (Header) */
         .app-header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
-            padding-top: calc(1rem + env(safe-area-inset-top));
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 40;
+            background: var(--primary); color: white; padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top));
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+            position: sticky; top: 0; z-index: 40;
         }
 
-        /* شاشة الدخول الاحترافية */
         .login-bg {
-            background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%); min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem;
         }
         .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 2.5rem 1.5rem;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 24px;
+            padding: 2.5rem 1.5rem; width: 100%; max-width: 400px; text-align: center;
         }
     </style>
 </head>
@@ -221,10 +100,7 @@
             <h1 class="text-3xl font-extrabold text-gray-900 mb-2">أكاديمية النجاح</h1>
             <p class="text-gray-500 mb-8 text-sm">منصة التعليم الذكية</p>
             
-            <div id="g_id_onload"
-                 data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com"
-                 data-callback="handleGoogleLogin">
-            </div>
+            <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
             <div class="g_id_signin flex justify-center mb-6" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="pill"></div>
 
             <div class="relative flex py-4 items-center">
@@ -233,7 +109,6 @@
                 <div class="flex-grow border-t border-gray-200"></div>
             </div>
 
-            <!-- أزرار التجربة السريعة -->
             <div class="flex flex-col gap-3 mt-2">
                 <button onclick="loginAs('admin', 'المدير العام', 'admin@app.com')" class="btn-touch w-full bg-red-50 text-red-700 font-bold py-3 rounded-xl border border-red-200 flex justify-center items-center gap-2">
                     <i class="fas fa-shield-alt text-xl"></i> دخول كمدير
@@ -251,96 +126,103 @@
     <!-- ================= المنصة الرئيسية ================= -->
     <div id="main-dashboard" class="hidden-section">
         
-        <!-- الهيدر العلوي -->
         <header class="app-header flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-white/20 p-2 rounded-full backdrop-blur-sm">
-                    <i class="fas fa-user text-xl"></i>
-                </div>
+                <div class="bg-white/20 p-2 rounded-full backdrop-blur-sm"><i class="fas fa-user text-xl"></i></div>
                 <div>
                     <h2 id="user-name-display" class="font-bold text-sm leading-tight">اسم المستخدم</h2>
                     <span id="user-role-badge" class="text-xs text-indigo-200">الدور</span>
                 </div>
             </div>
-            <button onclick="logout()" class="p-2 bg-white/10 rounded-full hover:bg-red-500/80 transition btn-touch">
-                <i class="fas fa-sign-out-alt text-xl"></i>
-            </button>
+            <button onclick="logout()" class="p-2 bg-white/10 rounded-full hover:bg-red-500/80 transition btn-touch"><i class="fas fa-sign-out-alt text-xl"></i></button>
         </header>
 
         <main class="p-4" id="content-area">
             
-            <!-- ====== [1] قسم الإدارة (المدير) ====== -->
+            <!-- ====== [1] الإدارة (للمدير) ====== -->
             <div id="view-admin" class="hidden-section pb-20">
                 <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users-cog text-red-500"></i> إدارة الصلاحيات</h2>
-                
                 <div class="mobile-card border-t-4 border-t-red-500">
                     <h3 class="font-bold mb-4">إضافة مستخدم جديد</h3>
-                    <div>
-                        <label class="text-sm font-bold text-gray-600 ml-1">الاسم</label>
-                        <input type="text" id="add-user-name" class="mobile-input" placeholder="اسم المعلم/الطالب">
-                    </div>
-                    <div class="mt-4">
-                        <label class="text-sm font-bold text-gray-600 ml-1">البريد الإلكتروني</label>
-                        <input type="email" id="add-user-email" class="mobile-input text-left" dir="ltr" placeholder="example@gmail.com">
-                    </div>
+                    <div><label class="text-sm font-bold text-gray-600 ml-1">الاسم</label><input type="text" id="add-user-name" class="mobile-input"></div>
+                    <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">الإيميل</label><input type="email" id="add-user-email" class="mobile-input text-left" dir="ltr"></div>
                     <div class="mt-4">
                         <label class="text-sm font-bold text-gray-600 ml-1">نوع الحساب</label>
-                        <select id="add-user-role" class="mobile-input bg-white">
-                            <option value="student">طالب</option>
-                            <option value="teacher">معلم</option>
-                            <option value="admin">مدير</option>
-                        </select>
+                        <select id="add-user-role" class="mobile-input bg-white"><option value="student">طالب</option><option value="teacher">معلم</option><option value="admin">مدير</option></select>
                     </div>
-                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-red-600 text-white font-bold py-3 rounded-xl shadow-md">
-                        إضافة للتصريح
-                    </button>
+                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-red-600 text-white font-bold py-3 rounded-xl shadow-md">إضافة للتصريح</button>
                 </div>
-
                 <h3 class="font-bold mt-6 mb-3 ml-2 text-gray-700">المستخدمون المصرح لهم</h3>
-                <div id="admin-users-list" class="space-y-3">
-                    <!-- كروت المستخدمين ستظهر هنا -->
-                </div>
+                <div id="admin-users-list" class="space-y-3"></div>
             </div>
 
-            <!-- ====== [2] قسم إدارة الواجبات (المعلم/المدير) ====== -->
+            <!-- ====== [2] الواجبات (للمعلم/المدير) ====== -->
             <div id="view-homework-manage" class="hidden-section pb-20">
-                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-edit text-indigo-500"></i> نشر واجب</h2>
-                
-                <div class="mobile-card border-t-4 border-t-indigo-500">
-                    <div>
-                        <label class="text-sm font-bold text-gray-600 ml-1">عنوان الواجب</label>
-                        <input type="text" id="hw-title" class="mobile-input" placeholder="مثال: ورقة عمل الرياضيات">
-                    </div>
-                    <div class="mt-4">
-                        <label class="text-sm font-bold text-gray-600 ml-1">آخر موعد للتسليم</label>
-                        <input type="date" id="hw-date" class="mobile-input">
-                    </div>
-                    <div class="mt-4">
-                        <label class="text-sm font-bold text-gray-600 ml-1">المادة والصف</label>
-                        <select id="hw-subject" class="mobile-input bg-white">
-                            <option value="">- اختر المادة -</option>
-                            <option value="لغة عربية">لغة عربية</option>
-                            <option value="رياضيات">رياضيات</option>
-                            <option value="علوم">علوم</option>
-                            <option value="لغة إنجليزية">لغة إنجليزية</option>
-                            <option value="تربية إسلامية">تربية إسلامية</option>
-                            <option value="دراسات / تاريخ">دراسات / تاريخ</option>
-                        </select>
-                    </div>
-                    <div class="mt-4">
-                        <label class="text-sm font-bold text-gray-600 ml-1">تفاصيل الواجب</label>
-                        <textarea id="hw-desc" rows="3" class="mobile-input resize-none" placeholder="اكتب التعليمات للطلاب هنا..."></textarea>
-                    </div>
-                    <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2">
-                        <i class="fas fa-paper-plane"></i> نشر الآن
+                <!-- تبويبات المعلم (نشر / متابعة) -->
+                <div class="flex bg-gray-200 p-1 rounded-xl mb-6">
+                    <button onclick="switchTeacherTab('publish')" id="tab-t-publish" class="flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600">نشر واجب جديد</button>
+                    <button onclick="switchTeacherTab('track')" id="tab-t-track" class="flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 relative">
+                        متابعة التسليمات <span id="submissions-badge" class="absolute top-1 left-2 bg-red-500 text-white text-[10px] px-1.5 rounded-full hidden">جديد</span>
                     </button>
                 </div>
+
+                <!-- 2-A: شاشة نشر واجب جديد -->
+                <div id="teacher-publish-view">
+                    <div class="mobile-card border-t-4 border-t-indigo-500">
+                        <div><label class="text-sm font-bold text-gray-600 ml-1">عنوان الواجب / المهمة</label><input type="text" id="hw-title" class="mobile-input"></div>
+                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">آخر موعد للتسليم</label><input type="date" id="hw-date" class="mobile-input"></div>
+                        
+                        <div class="mt-4">
+                            <label class="text-sm font-bold text-gray-600 ml-1">الصف والفصل</label>
+                            <select id="hw-grade" class="mobile-input bg-white">
+                                <option value="">- حدد الصف -</option>
+                                <optgroup label="الابتدائي">
+                                    <option value="الأول الابتدائي">الأول الابتدائي</option><option value="الثاني الابتدائي">الثاني الابتدائي</option>
+                                    <option value="الثالث الابتدائي">الثالث الابتدائي</option><option value="الرابع الابتدائي">الرابع الابتدائي</option>
+                                    <option value="الخامس الابتدائي">الخامس الابتدائي</option><option value="السادس الابتدائي">السادس الابتدائي</option>
+                                </optgroup>
+                                <optgroup label="الإعدادي">
+                                    <option value="الأول الإعدادي">الأول الإعدادي</option><option value="الثاني الإعدادي">الثاني الإعدادي</option><option value="الثالث الإعدادي">الثالث الإعدادي</option>
+                                </optgroup>
+                                <optgroup label="الثانوي (عام وفني)">
+                                    <option value="الأول الثانوي">الأول الثانوي</option><option value="الثاني الثانوي">الثاني الثانوي</option>
+                                    <option value="الثالث الثانوي">الثالث الثانوي</option><option value="الرابع الثانوي (فني)">الرابع الثانوي (فني)</option>
+                                    <option value="الخامس الثانوي (فني)">الخامس الثانوي (فني)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="text-sm font-bold text-gray-600 ml-1">المادة</label>
+                            <select id="hw-subject" class="mobile-input bg-white">
+                                <option value="">- حدد المادة -</option>
+                                <option value="اللغة العربية">اللغة العربية</option><option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+                                <option value="لغة أجنبية ثانية (فرنسي/ألماني)">لغة أجنبية ثانية</option><option value="التربية الدينية">التربية الدينية</option>
+                                <option value="الرياضيات (عام)">الرياضيات (عام)</option><option value="جبر وهندسة">جبر وهندسة</option><option value="تفاضل وتكامل">تفاضل وتكامل</option>
+                                <option value="العلوم">العلوم</option><option value="الفيزياء">الفيزياء</option><option value="الكيمياء">الكيمياء</option><option value="الأحياء">الأحياء</option>
+                                <option value="الدراسات الاجتماعية">الدراسات الاجتماعية</option><option value="التاريخ">التاريخ</option><option value="الجغرافيا">الجغرافيا</option>
+                                <option value="الفلسفة والمنطق">الفلسفة والمنطق</option><option value="علم النفس والاجتماع">علم النفس والاجتماع</option>
+                                <option value="الحاسب الآلي والتكنولوجيا">الحاسب الآلي والتكنولوجيا</option>
+                                <option value="أخرى (حدد في التفاصيل)">أخرى (حدد في التفاصيل)</option>
+                            </select>
+                        </div>
+
+                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">التفاصيل / التعليمات</label><textarea id="hw-desc" rows="3" class="mobile-input resize-none"></textarea></div>
+                        <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2"><i class="fas fa-paper-plane"></i> نشر الواجب</button>
+                    </div>
+                </div>
+
+                <!-- 2-B: شاشة متابعة التسليمات للمعلم -->
+                <div id="teacher-track-view" class="hidden-section">
+                    <div id="teacher-hw-list" class="space-y-4">
+                        <!-- تظهر هنا الواجبات التي نشرها المعلم -->
+                    </div>
+                </div>
             </div>
 
-            <!-- ====== [3] قسم تعديل الجدول (المعلم/المدير) ====== -->
+            <!-- ====== [3] الجدول (للمعلم/المدير) ====== -->
             <div id="view-schedule-manage" class="hidden-section pb-20">
                 <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-calendar-alt text-purple-500"></i> تنظيم الجدول</h2>
-                
                 <div class="mobile-card border-t-4 border-t-purple-500 mb-6 bg-purple-50">
                     <h3 class="font-bold text-purple-800 mb-3">حجز حصة</h3>
                     <div class="grid grid-cols-2 gap-3">
@@ -356,108 +238,100 @@
                             <label class="text-xs font-bold text-gray-600">الحصة</label>
                             <select id="sch-slot" class="mobile-input py-2 mt-1 bg-white">
                                 <option value="1">الأولى</option><option value="2">الثانية</option>
-                                <option value="3">الثالثة</option><option value="4">الرابعة</option>
-                                <option value="5">الخامسة</option>
+                                <option value="3">الثالثة</option><option value="4">الرابعة</option><option value="5">الخامسة</option>
                             </select>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <label class="text-xs font-bold text-gray-600">المادة والصف</label>
-                        <input type="text" id="sch-subject" class="mobile-input py-2 mt-1 bg-white" placeholder="مثال: علوم (ثاني إعدادي)">
+                        <label class="text-xs font-bold text-gray-600">المادة والصف (مثال: رياضيات 1ث)</label>
+                        <input type="text" id="sch-subject" class="mobile-input py-2 mt-1 bg-white">
                     </div>
                     <div class="flex gap-2 mt-4">
                         <button onclick="addScheduleSlot()" class="btn-touch flex-grow bg-purple-600 text-white font-bold py-2 rounded-xl">تثبيت في الجدول</button>
                         <button onclick="clearSchedule()" class="btn-touch w-12 bg-red-100 text-red-600 font-bold rounded-xl flex items-center justify-center"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-
                 <h3 class="font-bold mb-3 ml-2 text-gray-700">معاينة الجدول (اسحب لليمين واليسار)</h3>
-                <!-- الجدول المدمج (يظهر للجميع) -->
                 <div id="manage-schedule-container"></div>
             </div>
 
-            <!-- ====== [4] قسم لوحة الطالب ====== -->
+            <!-- ====== [4] لوحة الطالب ====== -->
             <div id="view-student" class="hidden-section pb-20">
-                
-                <!-- تبويبات سريعة للطالب -->
                 <div class="flex bg-gray-200 p-1 rounded-xl mb-6">
-                    <button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600">الواجبات</button>
-                    <button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500">الجدول</button>
+                    <button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600">الواجبات المطلوبة</button>
+                    <button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500">جدول الحصص</button>
                 </div>
-
-                <!-- الواجبات للطالب -->
-                <div id="student-hw-list" class="space-y-4">
-                    <!-- كروت الواجبات تظهر هنا -->
-                </div>
-
-                <!-- الجدول للطالب -->
+                <div id="student-hw-list" class="space-y-4"></div>
                 <div id="student-schedule-view" class="hidden-section">
-                    <h3 class="font-bold mb-3 ml-2 text-gray-700">الجدول الأسبوعي (اسحب لليمين واليسار)</h3>
+                    <h3 class="font-bold mb-3 ml-2 text-gray-700">الجدول الأسبوعي (اسحب للتصفح)</h3>
                     <div id="display-schedule-container"></div>
                 </div>
-
             </div>
 
         </main>
-
-        <!-- ================= شريط التنقل السفلي (Bottom Nav) ================= -->
-        <!-- يتم بناؤه ديناميكياً عبر الجافاسكريبت حسب الصلاحية -->
         <nav id="bottom-nav" class="bottom-nav"></nav>
-
     </div>
 
-    <!-- ================= النافذة المنبثقة (Bottom Sheet) لتسليم الواجب ================= -->
+    <!-- ================= نافذة (تسليم الواجب) للطالب ================= -->
     <div id="submit-sheet" class="bottom-sheet-overlay">
         <div class="bottom-sheet-content">
             <div class="sheet-handle"></div>
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-gray-800">تسليم الواجب</h3>
-                <button onclick="closeSheet()" class="p-2 bg-gray-100 rounded-full text-gray-500 btn-touch"><i class="fas fa-times text-xl"></i></button>
+                <button onclick="closeSheet('submit-sheet')" class="p-2 bg-gray-100 rounded-full text-gray-500 btn-touch"><i class="fas fa-times text-xl"></i></button>
             </div>
-            
             <div class="mb-4 bg-emerald-50 p-3 rounded-xl border border-emerald-100">
                 <span class="text-xs font-bold text-emerald-600">المهمة الحالية:</span>
                 <p id="sheet-hw-title" class="font-bold text-gray-800 mt-1"></p>
             </div>
-            
             <div class="space-y-5">
                 <div>
-                    <label class="block font-bold text-sm text-gray-600 mb-2">إجابة نصية / ملاحظات:</label>
-                    <textarea id="submit-text" class="mobile-input resize-none" rows="3" placeholder="اكتب هنا..."></textarea>
+                    <label class="block font-bold text-sm text-gray-600 mb-2">إجابة نصية / رسالة للمعلم:</label>
+                    <textarea id="submit-text" class="mobile-input resize-none" rows="3" placeholder="اكتب إجابتك هنا..."></textarea>
                 </div>
-                
                 <div>
                     <label class="block font-bold text-sm text-gray-600 mb-2">إرفاق ملف / صورة الواجب:</label>
                     <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition">
-                        <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf, .doc, .docx, image/*" onchange="updateFileName(this)">
+                        <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)">
                         <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
                         <p id="file-name-display" class="text-sm font-bold text-indigo-600">اضغط هنا لاختيار ملف</p>
-                        <p class="text-xs text-gray-400 mt-1">يدعم: PDF, Word, الصور</p>
                     </div>
                 </div>
+                <button onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 text-lg">تأكيد التسليم</button>
+            </div>
+        </div>
+    </div>
 
-                <button onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg mt-4 text-lg">
-                    تأكيد التسليم
-                </button>
+    <!-- ================= نافذة (عرض التسليمات) للمعلم ================= -->
+    <div id="teacher-view-sheet" class="bottom-sheet-overlay">
+        <div class="bottom-sheet-content" style="max-height: 95vh;">
+            <div class="sheet-handle"></div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-indigo-800">إجابات الطلاب</h3>
+                <button onclick="closeSheet('teacher-view-sheet')" class="p-2 bg-gray-100 rounded-full text-gray-500 btn-touch"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="mb-4 bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                <p id="view-sheet-hw-title" class="font-bold text-gray-800"></p>
+            </div>
+            <div id="submissions-container" class="space-y-3">
+                <!-- قائمة الطلاب الذين سلموا الواجب ستظهر هنا -->
             </div>
         </div>
     </div>
 
     <script>
-        /* ===== 1. تهيئة البيانات ===== */
-        let homeworks = JSON.parse(localStorage.getItem('hw_v3')) || [];
-        let scheduleData = JSON.parse(localStorage.getItem('sch_v3')) || {};
-        let allowedUsers = JSON.parse(localStorage.getItem('users_v3')) || [];
+        // تغيير مفاتيح الذاكرة لتجنب التضارب مع النسخ السابقة
+        let homeworks = JSON.parse(localStorage.getItem('hw_v4')) || [];
+        let scheduleData = JSON.parse(localStorage.getItem('sch_v4')) || {};
+        let allowedUsers = JSON.parse(localStorage.getItem('users_v4')) || [];
         let currentUser = null;
         let activeHwId = null;
 
         const days = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس"];
-        const slots = [1, 2, 3, 4, 5]; // 5 حصص يومياً
+        const slots = [1, 2, 3, 4, 5];
 
-        // إظهار شاشة الدخول أولاً
         document.getElementById('login-screen').classList.remove('hidden-section');
 
-        /* ===== 2. نظام الدخول (جوجل أو يدوي) ===== */
         function parseJwt(token) {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -472,9 +346,9 @@
             const name = payload.name;
 
             if (allowedUsers.length === 0) {
-                alert("بما أنك أول مستخدم، تم تعيينك كمدير للنظام.");
+                alert("تم تعيينك كمدير للنظام لأنك أول مستخدم.");
                 allowedUsers.push({ email, name, role: 'admin' });
-                localStorage.setItem('users_v3', JSON.stringify(allowedUsers));
+                localStorage.setItem('users_v4', JSON.stringify(allowedUsers));
                 loginAs('admin', name, email);
                 return;
             }
@@ -486,19 +360,13 @@
 
         function loginAs(role, name, email) {
             currentUser = { role, name, email };
-            
-            // تحديث واجهة المستخدم
             document.getElementById('login-screen').classList.add('hidden-section');
             document.getElementById('main-dashboard').classList.remove('hidden-section');
             document.getElementById('user-name-display').innerText = name;
-            
-            let roleAr = role === 'admin' ? 'مدير المنصة' : (role === 'teacher' ? 'معلم' : 'طالب');
-            document.getElementById('user-role-badge').innerText = roleAr;
+            document.getElementById('user-role-badge').innerText = role === 'admin' ? 'الإدارة' : (role === 'teacher' ? 'معلم' : 'طالب');
 
-            // بناء شريط التنقل السفلي حسب الصلاحية
             buildBottomNav();
             
-            // فتح الصفحة الافتراضية
             if(role === 'admin') navigateTo('view-admin', 'nav-admin');
             else if(role === 'teacher') navigateTo('view-homework-manage', 'nav-hw');
             else navigateTo('view-student', 'nav-student');
@@ -510,77 +378,49 @@
             document.getElementById('login-screen').classList.remove('hidden-section');
         }
 
-        /* ===== 3. التنقل وشريط الموبايل السفلي ===== */
         function buildBottomNav() {
             const nav = document.getElementById('bottom-nav');
             nav.innerHTML = '';
-            
-            const createItem = (id, icon, text, target) => `
-                <div class="nav-item btn-touch" id="${id}" onclick="navigateTo('${target}', '${id}')">
-                    <i class='fas ${icon}'></i>
-                    <span>${text}</span>
-                </div>
-            `;
+            const createItem = (id, icon, text, target) => `<div class="nav-item btn-touch" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon}'></i><span>${text}</span></div>`;
 
-            if(currentUser.role === 'admin') {
-                nav.innerHTML += createItem('nav-admin', 'fa-shield-alt', 'الإدارة', 'view-admin');
-            }
+            if(currentUser.role === 'admin') nav.innerHTML += createItem('nav-admin', 'fa-shield-alt', 'الإدارة', 'view-admin');
             if(currentUser.role === 'admin' || currentUser.role === 'teacher') {
-                nav.innerHTML += createItem('nav-hw', 'fa-pen-square', 'نشر واجب', 'view-homework-manage');
+                nav.innerHTML += createItem('nav-hw', 'fa-pen-square', 'الواجبات', 'view-homework-manage');
                 nav.innerHTML += createItem('nav-sch', 'fa-calendar-alt', 'الجدول', 'view-schedule-manage');
             }
-            if(currentUser.role === 'student') {
-                nav.innerHTML += createItem('nav-student', 'fa-layer-group', 'لوحتي', 'view-student');
-            }
+            if(currentUser.role === 'student') nav.innerHTML += createItem('nav-student', 'fa-layer-group', 'لوحتي', 'view-student');
         }
 
         function navigateTo(viewId, navId) {
-            // إخفاء كل الصفحات
-            ['view-admin', 'view-homework-manage', 'view-schedule-manage', 'view-student'].forEach(id => {
-                document.getElementById(id).classList.add('hidden-section');
-            });
-            // إظهار الصفحة المطلوبة
+            ['view-admin', 'view-homework-manage', 'view-schedule-manage', 'view-student'].forEach(id => document.getElementById(id).classList.add('hidden-section'));
             document.getElementById(viewId).classList.remove('hidden-section');
-
-            // تفعيل الزر في الأسفل
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if(document.getElementById(navId)) document.getElementById(navId).classList.add('active');
 
-            // تحديث البيانات المعروضة فور فتح الصفحة
             if(viewId === 'view-admin') renderAdminUsers();
             if(viewId === 'view-schedule-manage') drawSchedule('manage-schedule-container');
-            if(viewId === 'view-student') {
-                renderStudentHomeworks();
-                drawSchedule('display-schedule-container');
-                switchStudentTab('hw'); // افتراضياً يعرض الواجبات
-            }
-            
-            // صعود لأعلى الصفحة
+            if(viewId === 'view-homework-manage') switchTeacherTab('publish');
+            if(viewId === 'view-student') { renderStudentHomeworks(); drawSchedule('display-schedule-container'); switchStudentTab('hw'); }
             window.scrollTo(0,0);
         }
 
-        /* ===== 4. وظائف الإدارة ===== */
+        // ================= الإدارة =================
         function addUser() {
             let name = document.getElementById('add-user-name').value;
             let email = document.getElementById('add-user-email').value.trim().toLowerCase();
             let role = document.getElementById('add-user-role').value;
             if(!name || !email) return alert('يرجى إكمال البيانات!');
             if(allowedUsers.find(u => u.email === email)) return alert('الإيميل مسجل مسبقاً!');
-            
             allowedUsers.push({ email, name, role });
-            localStorage.setItem('users_v3', JSON.stringify(allowedUsers));
-            
-            document.getElementById('add-user-name').value = '';
-            document.getElementById('add-user-email').value = '';
-            renderAdminUsers();
-            alert('تم تصريح المستخدم بنجاح.');
+            localStorage.setItem('users_v4', JSON.stringify(allowedUsers));
+            document.getElementById('add-user-name').value = ''; document.getElementById('add-user-email').value = '';
+            renderAdminUsers(); alert('تم الإضافة بنجاح.');
         }
 
         function removeUser(email) {
-            if(confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+            if(confirm('متأكد من الحذف؟')) {
                 allowedUsers = allowedUsers.filter(u => u.email !== email);
-                localStorage.setItem('users_v3', JSON.stringify(allowedUsers));
-                renderAdminUsers();
+                localStorage.setItem('users_v4', JSON.stringify(allowedUsers)); renderAdminUsers();
             }
         }
 
@@ -589,129 +429,166 @@
             allowedUsers.forEach(u => {
                 let rName = u.role === 'admin' ? 'مدير' : (u.role === 'teacher' ? 'معلم' : 'طالب');
                 let color = u.role === 'admin' ? 'red' : (u.role === 'teacher' ? 'indigo' : 'emerald');
-                html += `
-                    <div class="mobile-card flex justify-between items-center mb-2 p-3">
-                        <div>
-                            <p class="font-bold text-sm text-gray-800">${u.name}</p>
-                            <p class="text-xs text-gray-500 font-mono mt-1" dir="ltr">${u.email}</p>
-                            <span class="inline-block mt-2 bg-${color}-100 text-${color}-700 px-2 py-0.5 rounded text-xs font-bold">${rName}</span>
-                        </div>
-                        ${u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="p-2 bg-red-50 text-red-500 rounded-full btn-touch"><i class="fas fa-trash"></i></button>` : ''}
-                    </div>
-                `;
+                html += `<div class="mobile-card flex justify-between items-center mb-2 p-3">
+                            <div><p class="font-bold text-sm text-gray-800">${u.name}</p><p class="text-xs text-gray-500 mt-1" dir="ltr">${u.email}</p>
+                            <span class="inline-block mt-2 bg-${color}-100 text-${color}-700 px-2 py-0.5 rounded text-xs font-bold">${rName}</span></div>
+                            ${u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="p-2 bg-red-50 text-red-500 rounded-full btn-touch"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>`;
             });
             document.getElementById('admin-users-list').innerHTML = html;
         }
 
-        /* ===== 5. وظائف الواجبات (للمعلم) ===== */
-        function addHomework() {
-            let title = document.getElementById('hw-title').value;
-            let date = document.getElementById('hw-date').value;
-            let subject = document.getElementById('hw-subject').value;
-            let desc = document.getElementById('hw-desc').value;
-
-            if(!title || !date || !subject) return alert('يرجى كتابة العنوان والمادة والتاريخ!');
-
-            homeworks.push({ id: Date.now(), title, date, subject, desc, submitted: false });
-            localStorage.setItem('hw_v3', JSON.stringify(homeworks));
+        // ================= المعلم (نشر ومتابعة الواجبات) =================
+        function switchTeacherTab(tab) {
+            let tPub = document.getElementById('tab-t-publish'), tTrk = document.getElementById('tab-t-track');
+            let vPub = document.getElementById('teacher-publish-view'), vTrk = document.getElementById('teacher-track-view');
             
-            document.getElementById('hw-title').value = '';
-            document.getElementById('hw-desc').value = '';
-            alert('تم نشر الواجب للطلاب بنجاح!');
-        }
-
-        /* ===== 6. تصميم وبرمجة الجدول الشبكي المخصص للهواتف ===== */
-        function addScheduleSlot() {
-            let day = document.getElementById('sch-day').value;
-            let slot = document.getElementById('sch-slot').value;
-            let subject = document.getElementById('sch-subject').value;
-
-            let key = `${day}-${slot}`;
-            if(subject) scheduleData[key] = subject;
-            else delete scheduleData[key];
-
-            localStorage.setItem('sch_v3', JSON.stringify(scheduleData));
-            drawSchedule('manage-schedule-container');
-            document.getElementById('sch-subject').value = '';
-        }
-
-        function clearSchedule() {
-            if(confirm('هل أنت متأكد من مسح الجدول المدرسي بالكامل؟')) {
-                scheduleData = {};
-                localStorage.setItem('sch_v3', JSON.stringify(scheduleData));
-                drawSchedule('manage-schedule-container');
+            if(tab === 'publish') {
+                tPub.className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600";
+                tTrk.className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 relative";
+                vPub.classList.remove('hidden-section'); vTrk.classList.add('hidden-section');
+            } else {
+                tTrk.className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600 relative";
+                tPub.className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500";
+                vTrk.classList.remove('hidden-section'); vPub.classList.add('hidden-section');
+                renderTeacherTracking();
             }
         }
 
-        function drawSchedule(containerId) {
-            let html = `
-                <div class="schedule-wrapper">
-                    <table class="schedule-table">
-                        <thead>
-                            <tr>
-                                <th>اليوم / الحصة</th>
-                                <th>ح 1</th><th>ح 2</th><th>ح 3</th><th>ح 4</th><th>ح 5</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
+        function addHomework() {
+            let title = document.getElementById('hw-title').value;
+            let date = document.getElementById('hw-date').value;
+            let grade = document.getElementById('hw-grade').value;
+            let subject = document.getElementById('hw-subject').value;
+            let desc = document.getElementById('hw-desc').value;
+
+            if(!title || !date || !grade || !subject) return alert('يرجى إكمال الحقول الأساسية!');
+
+            homeworks.push({ id: Date.now(), title, date, grade, subject, desc, submissions: [] });
+            localStorage.setItem('hw_v4', JSON.stringify(homeworks));
             
+            document.getElementById('hw-title').value = ''; document.getElementById('hw-desc').value = '';
+            alert('تم نشر الواجب للطلاب بنجاح!');
+        }
+
+        function renderTeacherTracking() {
+            let html = '';
+            let reversedHw = [...homeworks].reverse();
+            if(reversedHw.length === 0) {
+                document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center p-6 text-gray-400">لم تقم بنشر أي واجبات بعد.</div>`; return;
+            }
+
+            reversedHw.forEach(hw => {
+                let subCount = hw.submissions ? hw.submissions.length : 0;
+                let badgeClass = subCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600';
+                
+                html += `
+                    <div class="mobile-card border-r-4 border-r-indigo-500 p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-gray-800">${hw.title}</h3>
+                            <span class="px-2 py-1 rounded text-xs font-bold ${badgeClass}">${subCount} تسليم</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-3"><i class="fas fa-book ml-1"></i> ${hw.subject} (${hw.grade})</p>
+                        <button onclick="openTeacherSheet(${hw.id})" class="btn-touch w-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold py-2 rounded-lg text-sm">
+                            <i class="fas fa-eye ml-1"></i> عرض إجابات الطلاب
+                        </button>
+                    </div>
+                `;
+            });
+            document.getElementById('teacher-hw-list').innerHTML = html;
+        }
+
+        function openTeacherSheet(id) {
+            let hw = homeworks.find(h => h.id === id);
+            if(!hw) return;
+            document.getElementById('view-sheet-hw-title').innerText = hw.title + ` (${hw.grade})`;
+            
+            let html = '';
+            if(!hw.submissions || hw.submissions.length === 0) {
+                html = `<div class="text-center p-6 text-gray-400">لم يقم أي طالب بالتسليم حتى الآن.</div>`;
+            } else {
+                hw.submissions.forEach(sub => {
+                    html += `
+                        <div class="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                            <div class="flex justify-between items-center mb-2 border-b pb-2">
+                                <h4 class="font-bold text-sm text-indigo-800"><i class="fas fa-user-graduate ml-1"></i> ${sub.name}</h4>
+                                <span class="text-[10px] text-gray-400">${sub.date}</span>
+                            </div>
+                            <p class="text-sm text-gray-700 whitespace-pre-wrap mb-2">${sub.text || '<span class="text-gray-400 text-xs">لا يوجد نص مرفق</span>'}</p>
+                            ${sub.fileName ? `<div class="bg-emerald-50 text-emerald-700 p-2 rounded-lg text-xs font-bold border border-emerald-100 flex items-center gap-2"><i class="fas fa-paperclip"></i> المرفق: ${sub.fileName}</div>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('submissions-container').innerHTML = html;
+            document.getElementById('teacher-view-sheet').classList.add('active');
+        }
+
+        // ================= الجدول =================
+        function addScheduleSlot() {
+            let key = `${document.getElementById('sch-day').value}-${document.getElementById('sch-slot').value}`;
+            let val = document.getElementById('sch-subject').value;
+            if(val) scheduleData[key] = val; else delete scheduleData[key];
+            localStorage.setItem('sch_v4', JSON.stringify(scheduleData));
+            drawSchedule('manage-schedule-container'); document.getElementById('sch-subject').value = '';
+        }
+
+        function clearSchedule() {
+            if(confirm('مسح الجدول بالكامل؟')) { scheduleData = {}; localStorage.setItem('sch_v4', JSON.stringify(scheduleData)); drawSchedule('manage-schedule-container'); }
+        }
+
+        function drawSchedule(containerId) {
+            let html = `<div class="schedule-wrapper"><table class="schedule-table"><thead><tr><th>اليوم</th><th>ح 1</th><th>ح 2</th><th>ح 3</th><th>ح 4</th><th>ح 5</th></tr></thead><tbody>`;
             days.forEach(day => {
                 html += `<tr><td class="font-bold text-indigo-900 bg-indigo-50">${day}</td>`;
                 slots.forEach(slot => {
                     let sub = scheduleData[`${day}-${slot}`] || '';
-                    let cellClass = sub ? 'schedule-cell filled' : 'schedule-cell text-gray-300';
-                    html += `<td class="${cellClass}">${sub || '-'}</td>`;
-                });
-                html += `</tr>`;
-            });
-
-            html += `</tbody></table></div>`;
+                    html += `<td class="schedule-cell ${sub ? 'filled' : 'text-gray-300'}">${sub || '-'}</td>`;
+                }); html += `</tr>`;
+            }); html += `</tbody></table></div>`;
             document.getElementById(containerId).innerHTML = html;
         }
 
-        /* ===== 7. شاشة الطالب (واجبات وتسليم) ===== */
+        // ================= الطالب (عرض وتسليم) =================
         function switchStudentTab(tab) {
+            let tHw = document.getElementById('tab-hw'), tSch = document.getElementById('tab-sch');
+            let vHw = document.getElementById('student-hw-list'), vSch = document.getElementById('student-schedule-view');
             if(tab === 'hw') {
-                document.getElementById('tab-hw').className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600";
-                document.getElementById('tab-sch').className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 bg-transparent";
-                document.getElementById('student-hw-list').classList.remove('hidden-section');
-                document.getElementById('student-schedule-view').classList.add('hidden-section');
+                tHw.className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600";
+                tSch.className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 bg-transparent";
+                vHw.classList.remove('hidden-section'); vSch.classList.add('hidden-section');
             } else {
-                document.getElementById('tab-sch').className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600";
-                document.getElementById('tab-hw').className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 bg-transparent";
-                document.getElementById('student-schedule-view').classList.remove('hidden-section');
-                document.getElementById('student-hw-list').classList.add('hidden-section');
+                tSch.className = "flex-1 py-2 font-bold rounded-lg text-sm transition bg-white shadow-sm text-indigo-600";
+                tHw.className = "flex-1 py-2 font-bold rounded-lg text-sm transition text-gray-500 bg-transparent";
+                vSch.classList.remove('hidden-section'); vHw.classList.add('hidden-section');
             }
         }
 
         function renderStudentHomeworks() {
-            let html = '';
-            let reversedHw = [...homeworks].reverse();
-            
+            let html = ''; let reversedHw = [...homeworks].reverse();
             if(reversedHw.length === 0) {
-                document.getElementById('student-hw-list').innerHTML = `<div class="text-center p-8 text-gray-400 mt-10"><i class="fas fa-glass-cheers text-6xl mb-3 text-gray-300"></i><p>لا يوجد واجبات حالياً.. استمتع بيومك!</p></div>`;
-                return;
+                document.getElementById('student-hw-list').innerHTML = `<div class="text-center p-8 text-gray-400 mt-10"><i class="fas fa-glass-cheers text-6xl mb-3 text-gray-300"></i><p>لا يوجد واجبات حالياً.. استمتع بيومك!</p></div>`; return;
             }
 
             reversedHw.forEach(hw => {
-                let isSubmitted = hw.submitted;
+                // التأكد من أن الطالب الحالي قد سلم الواجب
+                let isSubmitted = hw.submissions && hw.submissions.some(s => s.email === currentUser.email);
+                
                 let btnHtml = isSubmitted ? 
                     `<button class="w-full mt-3 bg-gray-100 text-emerald-600 font-bold py-2.5 rounded-lg flex justify-center items-center gap-2 cursor-default"><i class="fas fa-check-circle"></i> تم التسليم</button>` : 
-                    `<button onclick="openSheet(${hw.id}, '${hw.title}')" class="btn-touch w-full mt-3 bg-indigo-600 text-white font-bold py-2.5 rounded-lg shadow-md flex justify-center items-center gap-2"><i class="fas fa-cloud-upload-alt"></i> تسليم الواجب</button>`;
+                    `<button onclick="openStudentSheet(${hw.id}, '${hw.title}')" class="btn-touch w-full mt-3 bg-indigo-600 text-white font-bold py-2.5 rounded-lg shadow-md flex justify-center items-center gap-2"><i class="fas fa-cloud-upload-alt"></i> تسليم الواجب</button>`;
                 
                 let borderClass = isSubmitted ? 'border-r-4 border-emerald-500 opacity-80' : 'border-r-4 border-indigo-500';
 
                 html += `
                     <div class="mobile-card ${borderClass} p-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-start mb-2">
                             <h3 class="font-bold text-lg text-gray-800">${hw.title}</h3>
-                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${hw.subject}</span>
+                            <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${hw.grade}</span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-2 line-clamp-3">${hw.desc}</p>
-                        <div class="mt-3 flex items-center gap-1 text-xs font-bold text-red-500">
-                            <i class="far fa-clock"></i> آخر موعد للتسليم: ${hw.date}
-                        </div>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full"><i class="fas fa-book"></i> ${hw.subject}</span>
+                        <p class="text-sm text-gray-600 mt-3 whitespace-pre-wrap">${hw.desc}</p>
+                        <div class="mt-3 flex items-center gap-1 text-xs font-bold text-red-500"><i class="far fa-clock"></i> التسليم: ${hw.date}</div>
                         ${btnHtml}
                     </div>
                 `;
@@ -719,55 +596,56 @@
             document.getElementById('student-hw-list').innerHTML = html;
         }
 
-        /* ===== 8. نافذة التسليم السفلية (Bottom Sheet) للآيفون والأندرويد ===== */
-        function openSheet(id, title) {
+        // ================= نوافذ (Bottom Sheets) المشتركة =================
+        function openStudentSheet(id, title) {
             activeHwId = id;
             document.getElementById('sheet-hw-title').innerText = title;
-            document.getElementById('submit-text').value = '';
-            document.getElementById('submit-file').value = '';
+            document.getElementById('submit-text').value = ''; document.getElementById('submit-file').value = '';
             document.getElementById('file-name-display').innerText = 'اضغط هنا لاختيار ملف';
-            
             document.getElementById('submit-sheet').classList.add('active');
         }
 
-        function closeSheet() {
-            document.getElementById('submit-sheet').classList.remove('active');
-            activeHwId = null;
+        function closeSheet(sheetId) {
+            document.getElementById(sheetId).classList.remove('active');
+            if(sheetId === 'submit-sheet') activeHwId = null;
         }
 
         function updateFileName(input) {
             let display = document.getElementById('file-name-display');
             if(input.files && input.files.length > 0) {
-                display.innerText = "تم اختيار: " + input.files[0].name;
-                display.classList.replace('text-indigo-600', 'text-emerald-600');
+                display.innerText = "المرفق: " + input.files[0].name; display.classList.replace('text-indigo-600', 'text-emerald-600');
             } else {
-                display.innerText = 'اضغط هنا لاختيار ملف';
-                display.classList.replace('text-emerald-600', 'text-indigo-600');
+                display.innerText = 'اضغط هنا لاختيار ملف'; display.classList.replace('text-emerald-600', 'text-indigo-600');
             }
         }
 
         function confirmSubmission() {
             let text = document.getElementById('submit-text').value;
-            let file = document.getElementById('submit-file').files.length;
+            let fileInput = document.getElementById('submit-file');
             
-            if(!text && file === 0) return alert('يجب كتابة إجابة أو إرفاق ملف لكي يتم التسليم!');
+            if(!text && fileInput.files.length === 0) return alert('يجب كتابة إجابة أو إرفاق ملف للتسليم!');
 
             let idx = homeworks.findIndex(h => h.id === activeHwId);
             if(idx > -1) {
-                homeworks[idx].submitted = true;
-                localStorage.setItem('hw_v3', JSON.stringify(homeworks));
+                if(!homeworks[idx].submissions) homeworks[idx].submissions = [];
+                // إضافة إجابة الطالب
+                homeworks[idx].submissions.push({
+                    email: currentUser.email,
+                    name: currentUser.name,
+                    text: text,
+                    fileName: fileInput.files.length > 0 ? fileInput.files[0].name : '',
+                    date: new Date().toLocaleString('ar-EG')
+                });
+                localStorage.setItem('hw_v4', JSON.stringify(homeworks));
             }
             
-            closeSheet();
-            setTimeout(() => {
-                renderStudentHomeworks();
-                alert('أحسنت! تم إرسال الواجب للمعلم بنجاح.');
-            }, 300); // تأخير بسيط لانتهاء حركة إغلاق النافذة
+            closeSheet('submit-sheet');
+            setTimeout(() => { renderStudentHomeworks(); alert('تم إرسال الواجب للمعلم بنجاح.'); }, 300);
         }
 
-        // إغلاق النافذة عند الضغط خارجها (في المنطقة المظللة)
-        document.getElementById('submit-sheet').addEventListener('click', function(e) {
-            if (e.target === this) closeSheet();
+        // إغلاق النوافذ عند النقر خارجها
+        document.querySelectorAll('.bottom-sheet-overlay').forEach(sheet => {
+            sheet.addEventListener('click', function(e) { if (e.target === this) closeSheet(this.id); });
         });
     </script>
 </body>
