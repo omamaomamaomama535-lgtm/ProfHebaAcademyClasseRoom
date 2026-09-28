@@ -9,180 +9,266 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
         .hidden-section { display: none; }
+        /* تحسين شكل السكرول بار */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-blue-900">
-        <div class="bg-white p-10 rounded-xl shadow-2xl w-full max-w-md text-center">
-            <i class="fas fa-graduation-cap text-6xl text-blue-600 mb-4"></i>
-            <h1 class="text-3xl font-bold mb-2">منصتي التعليمية</h1>
-            <p class="text-gray-500 mb-8">سجل دخولك للمتابعة</p>
+    <!-- ================= شاشة تسجيل الدخول ================= -->
+    <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 to-indigo-800 p-4">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md text-center transform transition-all">
+            <div class="bg-blue-100 w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <i class="fas fa-graduation-cap text-5xl text-blue-600"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-gray-800 mb-2">أكاديمية النجاح</h1>
+            <p class="text-gray-500 mb-8 text-sm">تسجيل الدخول للمنصة التعليمية المغلقة</p>
             
-            <!-- زر تسجيل دخول جوجل الحقيقي مضاف إليه Client ID الخاص بك -->
+            <!-- زر جوجل الحقيقي (يجب وضع الـ Client ID الخاص بك هنا) -->
             <div id="g_id_onload"
                  data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com"
                  data-callback="handleGoogleLogin">
             </div>
-            <div class="g_id_signin flex justify-center mb-4" data-type="standard"></div>
+            <div class="g_id_signin flex justify-center mb-6" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
 
-            <div class="relative flex py-5 items-center">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="flex-shrink-0 mx-4 text-gray-400">أو للتجربة المباشرة</span>
-                <div class="flex-grow border-t border-gray-300"></div>
+            <div class="relative flex py-4 items-center">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">للتجربة السريعة (بدون جوجل)</span>
+                <div class="flex-grow border-t border-gray-200"></div>
             </div>
 
-            <div class="flex gap-4 justify-center">
-                <button onclick="login('teacher')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-1/2 transition">
-                    دخول كمعلم
-                </button>
-                <button onclick="login('student')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-1/2 transition">
-                    دخول كطالب
-                </button>
+            <div class="grid grid-cols-3 gap-2 mt-2">
+                <button onclick="loginAs('admin', 'مدير النظام', 'admin@test.com')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 rounded transition">مدير</button>
+                <button onclick="loginAs('teacher', 'أستاذ أحمد', 'teacher@test.com')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">معلم</button>
+                <button onclick="loginAs('student', 'طالب تجريبي', 'student@test.com')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 rounded transition">طالب</button>
             </div>
         </div>
     </div>
 
-    <!-- المنصة الرئيسية (تظهر بعد تسجيل الدخول) -->
-    <div id="main-dashboard" class="hidden-section min-h-screen">
-        <nav class="bg-blue-800 text-white p-4 shadow-md flex justify-between items-center">
-            <div class="text-xl font-bold"><i class="fas fa-school ml-2"></i>المنصة التعليمية</div>
-            <div class="flex items-center gap-4">
-                <span id="user-name-display" class="font-semibold text-sm"></span>
-                <span id="user-role-badge" class="bg-yellow-500 text-blue-900 px-3 py-1 rounded-full font-bold text-sm"></span>
-                <button onclick="logout()" class="hover:text-red-300 transition"><i class="fas fa-sign-out-alt ml-1"></i>خروج</button>
+    <!-- ================= المنصة الرئيسية ================= -->
+    <div id="main-dashboard" class="hidden-section min-h-screen flex flex-col md:flex-row">
+        
+        <!-- القائمة الجانبية (Sidebar) -->
+        <aside class="bg-blue-900 text-white w-full md:w-64 flex-shrink-0 shadow-lg z-10 md:min-h-screen flex flex-col">
+            <div class="p-6 text-center border-b border-blue-800">
+                <i class="fas fa-user-circle text-4xl mb-3 text-blue-300"></i>
+                <h3 id="user-name-display" class="font-bold text-lg truncate">اسم المستخدم</h3>
+                <span id="user-role-badge" class="inline-block mt-2 bg-yellow-500 text-blue-900 px-3 py-1 rounded-full text-xs font-bold"></span>
+                <p id="user-email-display" class="text-xs text-blue-300 mt-2 truncate"></p>
             </div>
-        </nav>
+            <div class="flex-grow p-4">
+                <ul class="space-y-2">
+                    <!-- سيتم عرض الأزرار هنا بناءً على الصلاحية بواسطة جافاسكريبت -->
+                </ul>
+            </div>
+            <div class="p-4 border-t border-blue-800">
+                <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+        </aside>
 
-        <div class="container mx-auto p-6 max-w-5xl">
+        <!-- محتوى لوحة التحكم (Main Content) -->
+        <main class="flex-grow p-6 lg:p-10 w-full overflow-y-auto">
             
-            <!-- ================= واجهة المعلم ================= -->
-            <div id="teacher-view" class="hidden-section space-y-8">
-                
-                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
-                    <h2 class="text-2xl font-bold mb-4 text-blue-700"><i class="fas fa-tasks ml-2"></i>إضافة واجب جديد</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="hw-title" placeholder="عنوان الواجب" class="border p-2 rounded w-full">
-                        
-                        <select id="hw-subject" class="border p-2 rounded w-full">
-                            <option value="">-- اختر المادة --</option>
-                            <option value="اللغة العربية">اللغة العربية</option>
-                            <option value="الرياضيات">الرياضيات</option>
-                            <option value="العلوم">العلوم</option>
-                            <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
-                            <option value="التاريخ">التاريخ</option>
-                            <option value="الحاسب الآلي">الحاسب الآلي</option>
-                        </select>
-                        
-                        <div class="flex flex-col">
-                            <label class="text-sm text-gray-600 mb-1">تاريخ التسليم:</label>
-                            <input type="date" id="hw-date" class="border p-2 rounded w-full">
+            <!-- ================= لوحة المدير (Admin) ================= -->
+            <div id="admin-view" class="hidden-section space-y-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-600 to-red-500 p-4 text-white">
+                        <h2 class="text-xl font-bold"><i class="fas fa-users-cog ml-2"></i>إدارة المستخدمين والصلاحيات</h2>
+                        <p class="text-sm opacity-90">أضف إيميلات المعلمين والطلاب المسموح لهم بالدخول</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row gap-4 items-end mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div class="flex-grow w-full">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">اسم المستخدم</label>
+                                <input type="text" id="add-user-name" placeholder="مثال: الطالب محمد" class="border border-gray-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500">
+                            </div>
+                            <div class="flex-grow w-full">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">البريد الإلكتروني (Gmail)</label>
+                                <input type="email" id="add-user-email" placeholder="example@gmail.com" class="border border-gray-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500 text-left" dir="ltr">
+                            </div>
+                            <div class="w-full md:w-1/4">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">الصلاحية</label>
+                                <select id="add-user-role" class="border border-gray-300 p-2.5 rounded w-full focus:outline-none focus:border-red-500">
+                                    <option value="student">طالب</option>
+                                    <option value="teacher">معلم</option>
+                                </select>
+                            </div>
+                            <button onclick="addUserToSystem()" class="bg-red-600 text-white font-bold py-2.5 px-6 rounded hover:bg-red-700 transition w-full md:w-auto flex-shrink-0">
+                                إضافة وتصريح
+                            </button>
                         </div>
-                        
-                        <textarea id="hw-desc" placeholder="تفاصيل الواجب..." class="border p-2 rounded w-full col-span-1 md:col-span-2"></textarea>
-                        
-                        <button onclick="addHomework()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded col-span-1 md:col-span-2 hover:bg-blue-700 transition">
-                            نشر الواجب للطلاب
-                        </button>
+
+                        <h3 class="font-bold text-lg mb-3 border-b pb-2">قائمة المصرح لهم بالدخول</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm text-right">
+                                <thead class="bg-gray-100 text-gray-600">
+                                    <tr>
+                                        <th class="p-3 border-b">الاسم</th>
+                                        <th class="p-3 border-b">البريد الإلكتروني</th>
+                                        <th class="p-3 border-b">الصلاحية</th>
+                                        <th class="p-3 border-b text-center">إجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-list">
+                                    <!-- قائمة المستخدمين -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
-                    <h2 class="text-2xl font-bold mb-4 text-purple-700"><i class="fas fa-calendar-alt ml-2"></i>تحديث الجدول الدراسي</h2>
-                    <div class="flex flex-wrap gap-4 items-end">
-                        <div class="w-full md:w-1/4">
-                            <label class="text-sm text-gray-600 mb-1">اليوم:</label>
-                            <select id="sch-day" class="border p-2 rounded w-full">
-                                <option value="الأحد">الأحد</option>
-                                <option value="الإثنين">الإثنين</option>
-                                <option value="الثلاثاء">الثلاثاء</option>
-                                <option value="الأربعاء">الأربعاء</option>
-                                <option value="الخميس">الخميس</option>
+            <!-- ================= لوحة المعلم (Teacher) ================= -->
+            <div id="teacher-view" class="hidden-section space-y-8 max-w-5xl mx-auto">
+                
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-4 text-white">
+                        <h2 class="text-xl font-bold"><i class="fas fa-edit ml-2"></i>نشر واجب جديد</h2>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="text-sm font-bold text-gray-700 mb-1 block">عنوان الواجب</label>
+                            <input type="text" id="hw-title" class="border p-2.5 rounded w-full bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-gray-700 mb-1 block">تاريخ التسليم</label>
+                            <input type="date" id="hw-date" class="border p-2.5 rounded w-full bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="text-sm font-bold text-gray-700 mb-1 block">المادة الدراسية</label>
+                            <select id="hw-subject" class="border p-2.5 rounded w-full bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                                <option value="">-- اختر المادة --</option>
+                                <option value="اللغة العربية">اللغة العربية</option>
+                                <option value="الرياضيات">الرياضيات</option>
+                                <option value="العلوم">العلوم</option>
+                                <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
+                                <option value="التاريخ والجغرافيا">التاريخ والجغرافيا</option>
                             </select>
                         </div>
-                        <div class="w-full md:w-1/4">
-                            <label class="text-sm text-gray-600 mb-1">المادة:</label>
-                            <input type="text" id="sch-subject" placeholder="مثال: رياضيات" class="border p-2 rounded w-full">
+                        <div class="md:col-span-3">
+                            <label class="text-sm font-bold text-gray-700 mb-1 block">تفاصيل الواجب</label>
+                            <textarea id="hw-desc" rows="3" class="border p-2.5 rounded w-full bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500"></textarea>
                         </div>
-                        <div class="w-full md:w-1/4">
-                            <label class="text-sm text-gray-600 mb-1">الوقت:</label>
-                            <input type="time" id="sch-time" class="border p-2 rounded w-full">
+                        <div class="md:col-span-3 flex justify-end mt-2">
+                            <button onclick="addHomework()" class="bg-blue-600 text-white font-bold py-2.5 px-8 rounded shadow hover:bg-blue-700 transition">نشر الآن</button>
                         </div>
-                        <button onclick="addSchedule()" class="bg-purple-600 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 transition w-full md:w-auto">
-                            إضافة للجدول
-                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-600 to-purple-500 p-4 text-white">
+                        <h2 class="text-xl font-bold"><i class="fas fa-calendar-plus ml-2"></i>إعداد الجدول الدراسي الأسبوعي</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row gap-4 items-end bg-gray-50 p-4 rounded border border-gray-200">
+                            <div class="w-full md:w-1/4">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">يوم الأسبوع</label>
+                                <select id="sch-day" class="border p-2.5 rounded w-full bg-white">
+                                    <option value="السبت">السبت</option>
+                                    <option value="الأحد">الأحد</option>
+                                    <option value="الإثنين">الإثنين</option>
+                                    <option value="الثلاثاء">الثلاثاء</option>
+                                    <option value="الأربعاء">الأربعاء</option>
+                                    <option value="الخميس">الخميس</option>
+                                    <option value="الجمعة">الجمعة</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-2/4">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">المادة والصف (مثال: رياضيات - الصف الأول)</label>
+                                <input type="text" id="sch-subject" class="border p-2.5 rounded w-full bg-white">
+                            </div>
+                            <div class="w-full md:w-1/4">
+                                <label class="text-sm font-bold text-gray-700 mb-1 block">وقت الحصة</label>
+                                <input type="time" id="sch-time" class="border p-2.5 rounded w-full bg-white">
+                            </div>
+                            <button onclick="addSchedule()" class="bg-purple-600 text-white font-bold py-2.5 px-6 rounded shadow hover:bg-purple-700 transition w-full md:w-auto">
+                                إضافة
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ================= واجهة الطالب ================= -->
-            <div id="student-view" class="hidden-section space-y-8">
+            <!-- ================= لوحة الطالب (Student) ================= -->
+            <div id="student-view" class="hidden-section space-y-8 max-w-5xl mx-auto">
                 
-                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
-                    <h2 class="text-2xl font-bold mb-4 text-green-700"><i class="fas fa-book-open ml-2"></i>الواجبات المطلوبة</h2>
-                    <div id="student-hw-list" class="space-y-4">
-                        <!-- سيتم إضافة الواجبات هنا -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- الواجبات -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-green-500 inline-block pb-1"><i class="fas fa-book-reader ml-2 text-green-600"></i>الواجبات المطلوبة</h2>
+                        <div id="student-hw-list" class="space-y-4 mt-4">
+                            <!-- سيتم إضافة الواجبات هنا -->
+                        </div>
                     </div>
-                </div>
 
-                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
-                    <h2 class="text-2xl font-bold mb-4 text-indigo-700"><i class="fas fa-table ml-2"></i>الجدول الدراسي الأسبوعي</h2>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border">
-                            <thead class="bg-indigo-100">
-                                <tr>
-                                    <th class="py-2 px-4 border">اليوم</th>
-                                    <th class="py-2 px-4 border">المادة</th>
-                                    <th class="py-2 px-4 border">الوقت</th>
-                                </tr>
-                            </thead>
-                            <tbody id="student-schedule-list" class="text-center">
-                                <!-- سيتم إضافة الجدول هنا -->
-                            </tbody>
-                        </table>
+                    <!-- الجدول الأسبوعي للطالب -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden sticky top-6">
+                            <div class="bg-indigo-600 p-4 text-white text-center">
+                                <h3 class="text-lg font-bold"><i class="fas fa-table ml-2"></i>الجدول الأسبوعي</h3>
+                            </div>
+                            <div class="p-0 max-h-[500px] overflow-y-auto">
+                                <table class="min-w-full text-sm">
+                                    <tbody id="student-schedule-list">
+                                        <!-- سيتم إضافة الجدول هنا -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-        </div>
+        </main>
     </div>
 
-    <!-- نافذة تسليم الواجب (Modal) للطالب -->
-    <div id="submit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg">
-            <h3 class="text-xl font-bold mb-4 border-b pb-2">تسليم الواجب</h3>
-            <p id="modal-hw-title" class="text-gray-600 mb-4 text-sm"></p>
-            
-            <div class="space-y-4">
+    <!-- ================= نافذة تسليم الواجب (Modal) للطالب ================= -->
+    <div id="submit-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50 p-4 transition-opacity">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform scale-100 transition-transform">
+            <div class="bg-green-600 p-4 text-white flex justify-between items-center">
+                <h3 class="text-lg font-bold">تسليم الواجب</h3>
+                <button onclick="closeModal()" class="text-white hover:text-red-200 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p id="modal-hw-title" class="text-gray-700 font-semibold text-sm bg-green-50 p-2 rounded border border-green-100"></p>
+                
                 <div>
-                    <label class="block font-bold mb-1">رسالة لمعلمك (اختياري):</label>
-                    <textarea id="submit-text" class="border w-full p-2 rounded" rows="3" placeholder="اكتب إجابتك أو ملاحظاتك هنا..."></textarea>
+                    <label class="block font-bold text-gray-700 mb-1 text-sm">رسالة لمعلمك (اختياري):</label>
+                    <textarea id="submit-text" class="border border-gray-300 w-full p-2.5 rounded focus:outline-none focus:border-green-500" rows="3" placeholder="اكتب إجابتك هنا..."></textarea>
                 </div>
                 
                 <div>
-                    <label class="block font-bold mb-1">إرفاق ملف (صور، PDF، Word):</label>
-                    <input type="file" id="submit-file" class="border w-full p-2 rounded bg-gray-50" 
+                    <label class="block font-bold text-gray-700 mb-1 text-sm">إرفاق ملف (صور، PDF، Word):</label>
+                    <input type="file" id="submit-file" class="border border-gray-300 w-full p-2 rounded bg-gray-50 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" 
                            accept=".pdf, .doc, .docx, image/png, image/jpeg, image/jpg">
-                    <p class="text-xs text-gray-500 mt-1">الصيغ المدعومة: PDF, DOC, DOCX, JPG, PNG</p>
                 </div>
-            </div>
 
-            <div class="mt-6 flex gap-3 justify-end">
-                <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">إلغاء</button>
-                <button onclick="confirmSubmission()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">تسليم الآن</button>
+                <div class="mt-6 flex gap-3 pt-4 border-t">
+                    <button onclick="confirmSubmission()" class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700 shadow-md transition">تسليم الآن</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 1. قواعد البيانات المحلية
         let homeworks = JSON.parse(localStorage.getItem('homeworks')) || [];
         let schedule = JSON.parse(localStorage.getItem('schedule')) || [];
+        let allowedUsers = JSON.parse(localStorage.getItem('allowedUsers')) || [];
+        
+        let currentUser = null;
         let currentHomeworkIdToSubmit = null;
 
-        // دالة لفك تشفير بيانات جوجل
+        // ترتيب الأيام لفرز الجدول بشكل صحيح
+        const daysOrder = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+
+        // 2. نظام تسجيل الدخول بحساب جوجل (وإدارة الصلاحيات)
         function parseJwt (token) {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -192,60 +278,129 @@
             return JSON.parse(jsonPayload);
         }
 
-        // تسجيل الدخول الحقيقي بجوجل
         function handleGoogleLogin(response) {
-            const responsePayload = parseJwt(response.credential);
-            
-            console.log("ID: " + responsePayload.sub);
-            console.log('Full Name: ' + responsePayload.name);
-            console.log('Email: ' + responsePayload.email);
+            const payload = parseJwt(response.credential);
+            const userEmail = payload.email.toLowerCase();
+            const userName = payload.name;
 
-            // إظهار اسم المستخدم
-            document.getElementById('user-name-display').innerText = "مرحباً: " + responsePayload.name;
+            // إذا كانت المنصة جديدة تماماً (أول شخص يسجل دخول يصبح هو المدير)
+            if (allowedUsers.length === 0) {
+                alert("تهانينا! بما أنك أول شخص يسجل الدخول، تم تعيينك كـ (مدير النظام). يمكنك الآن إضافة المعلمين والطلاب.");
+                allowedUsers.push({ email: userEmail, name: userName, role: 'admin' });
+                localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
+                loginAs('admin', userName, userEmail);
+                return;
+            }
+
+            // التحقق هل البريد مسجل في قاعدة بيانات المدير
+            const registeredUser = allowedUsers.find(u => u.email === userEmail);
             
-            // افتراضياً ندخله كطالب (في تطبيق حقيقي يمكنك تحديد الدور بناءً على الإيميل)
-            login('student');
+            if (registeredUser) {
+                // مسموح له بالدخول
+                loginAs(registeredUser.role, registeredUser.name || userName, userEmail);
+            } else {
+                // غير مسجل
+                alert("عفواً، حسابك (" + userEmail + ") غير مسرح له بالدخول. يرجى التواصل مع إدارة المدرسة لإضافتك.");
+            }
         }
 
-        function login(role) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'block';
+        // 3. توجيه المستخدم للوحة المناسبة
+        function loginAs(role, name, email) {
+            currentUser = { role, name, email };
             
-            if(role === 'teacher') {
-                document.getElementById('user-role-badge').innerText = "لوحة المعلم";
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'flex';
+            
+            document.getElementById('user-name-display').innerText = name;
+            document.getElementById('user-email-display').innerText = email;
+
+            // إخفاء كل اللوحات أولاً
+            document.getElementById('admin-view').style.display = 'none';
+            document.getElementById('teacher-view').style.display = 'none';
+            document.getElementById('student-view').style.display = 'none';
+
+            if(role === 'admin') {
+                document.getElementById('user-role-badge').innerText = "مدير النظام";
+                document.getElementById('user-role-badge').className = "inline-block mt-2 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold border border-red-200";
+                document.getElementById('admin-view').style.display = 'block';
+                renderAdminView();
+            } 
+            else if(role === 'teacher') {
+                document.getElementById('user-role-badge').innerText = "معلم";
+                document.getElementById('user-role-badge').className = "inline-block mt-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold border border-blue-200";
                 document.getElementById('teacher-view').style.display = 'block';
-                document.getElementById('student-view').style.display = 'none';
-                if(!document.getElementById('user-name-display').innerText) {
-                     document.getElementById('user-name-display').innerText = "المعلم";
-                }
-            } else {
-                document.getElementById('user-role-badge').innerText = "لوحة الطالب";
-                document.getElementById('teacher-view').style.display = 'none';
+            } 
+            else {
+                document.getElementById('user-role-badge').innerText = "طالب";
+                document.getElementById('user-role-badge').className = "inline-block mt-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold border border-green-200";
                 document.getElementById('student-view').style.display = 'block';
-                if(!document.getElementById('user-name-display').innerText) {
-                     document.getElementById('user-name-display').innerText = "طالب (تجريبي)";
-                }
                 renderStudentView();
             }
         }
 
         function logout() {
-            // إعادة ضبط الشاشة
+            currentUser = null;
             document.getElementById('main-dashboard').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('user-name-display').innerText = '';
         }
 
+        // 4. وظائف المدير (Admin)
+        function addUserToSystem() {
+            let name = document.getElementById('add-user-name').value;
+            let email = document.getElementById('add-user-email').value.trim().toLowerCase();
+            let role = document.getElementById('add-user-role').value;
+
+            if(!name || !email) return alert("يرجى كتابة الاسم والبريد الإلكتروني");
+            
+            // التأكد من عدم تكرار الإيميل
+            if(allowedUsers.find(u => u.email === email)) {
+                return alert("هذا البريد الإلكتروني مضاف مسبقاً!");
+            }
+
+            allowedUsers.push({ email, name, role });
+            localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
+            
+            document.getElementById('add-user-name').value = '';
+            document.getElementById('add-user-email').value = '';
+            renderAdminView();
+        }
+
+        function removeUser(email) {
+            if(confirm("هل أنت متأكد من حذف هذا المستخدم؟ لن يتمكن من الدخول للمنصة.")) {
+                allowedUsers = allowedUsers.filter(u => u.email !== email);
+                localStorage.setItem('allowedUsers', JSON.stringify(allowedUsers));
+                renderAdminView();
+            }
+        }
+
+        function renderAdminView() {
+            let html = '';
+            allowedUsers.forEach(u => {
+                let roleName = u.role === 'admin' ? 'مدير' : (u.role === 'teacher' ? 'معلم' : 'طالب');
+                let roleColor = u.role === 'admin' ? 'text-red-600' : (u.role === 'teacher' ? 'text-blue-600' : 'text-green-600');
+                
+                html += `
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="p-3 font-semibold">${u.name}</td>
+                        <td class="p-3 text-left" dir="ltr">${u.email}</td>
+                        <td class="p-3 font-bold ${roleColor}">${roleName}</td>
+                        <td class="p-3 text-center">
+                            ${u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="text-red-500 hover:text-red-700 bg-red-50 px-3 py-1 rounded text-xs"><i class="fas fa-trash"></i> حذف</button>` : '<span class="text-gray-400 text-xs">لا يمكن حذفه</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('admin-users-list').innerHTML = html;
+        }
+
+        // 5. وظائف المعلم
         function addHomework() {
             let title = document.getElementById('hw-title').value;
             let subject = document.getElementById('hw-subject').value;
             let date = document.getElementById('hw-date').value;
             let desc = document.getElementById('hw-desc').value;
 
-            if(!title || !subject || !date) {
-                alert('يرجى تعبئة العنوان والمادة وتاريخ التسليم!');
-                return;
-            }
+            if(!title || !subject || !date) return alert('يرجى تعبئة العنوان والمادة وتاريخ التسليم!');
 
             homeworks.push({ id: Date.now(), title, subject, date, desc, submitted: false });
             localStorage.setItem('homeworks', JSON.stringify(homeworks));
@@ -253,6 +408,7 @@
             alert('تم نشر الواجب للطلاب بنجاح!');
             document.getElementById('hw-title').value = '';
             document.getElementById('hw-desc').value = '';
+            document.getElementById('hw-subject').value = '';
         }
 
         function addSchedule() {
@@ -264,26 +420,40 @@
 
             schedule.push({ day, subject, time });
             localStorage.setItem('schedule', JSON.stringify(schedule));
-            alert('تم التحديث في الجدول');
+            alert('تم إضافة الحصة للجدول الأسبوعي');
             document.getElementById('sch-subject').value = '';
         }
 
+        // 6. وظائف الطالب
         function renderStudentView() {
+            // عرض الواجبات (أحدث واجب يظهر أولاً)
             let hwHtml = '';
-            if(homeworks.length === 0) hwHtml = '<p class="text-gray-500">لا يوجد واجبات حالياً.</p>';
-            homeworks.forEach((hw) => {
+            let sortedHw = [...homeworks].reverse(); 
+            
+            if(sortedHw.length === 0) hwHtml = '<div class="bg-white p-8 rounded-lg shadow-sm text-center text-gray-500 border border-gray-100"><i class="fas fa-smile-beam text-4xl mb-3 text-gray-300"></i><p>لا يوجد واجبات مطلوبة حالياً. استمتع بوقتك!</p></div>';
+            
+            sortedHw.forEach((hw) => {
+                let isLate = new Date(hw.date) < new Date(new Date().toDateString());
+                let dateColor = isLate ? 'text-red-600 font-bold' : 'text-gray-600';
+                
                 let statusBadge = hw.submitted ? 
-                    '<span class="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold"><i class="fas fa-check-circle"></i> تم التسليم</span>' : 
-                    `<button onclick="openSubmitModal(${hw.id}, '${hw.title}')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 text-sm font-bold">تسليم الواجب</button>`;
+                    '<span class="text-green-700 bg-green-100 border border-green-200 px-4 py-2 rounded-lg text-sm font-bold shadow-sm flex items-center gap-2"><i class="fas fa-check-circle text-lg"></i> تم التسليم</span>' : 
+                    `<button onclick="openSubmitModal(${hw.id}, '${hw.title}')" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 text-sm font-bold shadow-md transition flex items-center gap-2"><i class="fas fa-cloud-upload-alt"></i> تسليم الواجب</button>`;
                 
                 hwHtml += `
-                    <div class="border p-4 rounded bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
-                            <h3 class="font-bold text-lg">${hw.title} <span class="text-sm font-normal text-gray-500">(${hw.subject})</span></h3>
-                            <p class="text-gray-600 text-sm mt-1">${hw.desc}</p>
-                            <p class="text-red-500 text-xs mt-2"><i class="fas fa-clock"></i> آخر موعد: ${hw.date}</p>
+                    <div class="bg-white border ${hw.submitted ? 'border-green-200' : 'border-gray-200 border-l-4 border-l-blue-500'} p-5 rounded-xl shadow-sm hover:shadow-md transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="w-full">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl text-gray-800">${hw.title}</h3>
+                                <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded text-xs font-semibold">${hw.subject}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">${hw.desc}</p>
+                            <div class="flex items-center gap-2 text-xs ${dateColor}">
+                                <i class="fas fa-clock"></i> 
+                                <span>آخر موعد: ${hw.date} ${isLate && !hw.submitted ? '(متأخر)' : ''}</span>
+                            </div>
                         </div>
-                        <div>
+                        <div class="flex-shrink-0 w-full md:w-auto mt-2 md:mt-0 flex justify-end">
                             ${statusBadge}
                         </div>
                     </div>
@@ -291,23 +461,39 @@
             });
             document.getElementById('student-hw-list').innerHTML = hwHtml;
 
+            // عرض الجدول وترتيبه حسب أيام الأسبوع المحددة
             let schHtml = '';
-            if(schedule.length === 0) schHtml = '<tr><td colspan="3" class="p-4 text-gray-500">الجدول فارغ</td></tr>';
-            schedule.forEach(s => {
+            
+            // ترتيب الجدول
+            let sortedSchedule = [...schedule].sort((a, b) => {
+                return daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day);
+            });
+
+            if(sortedSchedule.length === 0) schHtml = '<tr><td colspan="3" class="p-6 text-center text-gray-500">الجدول فارغ</td></tr>';
+            
+            let currentDay = '';
+            sortedSchedule.forEach(s => {
+                // رسم خط فاصل عند تغير اليوم
+                if (s.day !== currentDay) {
+                    schHtml += `<tr><td colspan="3" class="bg-indigo-50 font-bold text-indigo-800 p-2 text-right border-y">${s.day}</td></tr>`;
+                    currentDay = s.day;
+                }
+                
                 schHtml += `
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="py-2 px-4 border">${s.day}</td>
-                        <td class="py-2 px-4 border font-bold">${s.subject}</td>
-                        <td class="py-2 px-4 border text-gray-600">${s.time}</td>
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="p-3"></td>
+                        <td class="p-3 font-semibold text-gray-800">${s.subject}</td>
+                        <td class="p-3 text-indigo-600 font-bold" dir="ltr">${s.time}</td>
                     </tr>
                 `;
             });
             document.getElementById('student-schedule-list').innerHTML = schHtml;
         }
 
+        // 7. نظام التسليم المنبثق (Modal)
         function openSubmitModal(id, title) {
             currentHomeworkIdToSubmit = id;
-            document.getElementById('modal-hw-title').innerText = "تسليم واجب: " + title;
+            document.getElementById('modal-hw-title').innerText = "عنوان الواجب: " + title;
             document.getElementById('submit-text').value = '';
             document.getElementById('submit-file').value = '';
             document.getElementById('submit-modal').classList.remove('hidden');
@@ -323,7 +509,7 @@
             let fileInput = document.getElementById('submit-file');
             
             if(!text && fileInput.files.length === 0) {
-                alert("يرجى كتابة نص أو إرفاق ملف على الأقل!");
+                alert("يرجى كتابة نص أو إرفاق ملف لتقديمه للمعلم!");
                 return;
             }
 
@@ -333,7 +519,7 @@
                 localStorage.setItem('homeworks', JSON.stringify(homeworks));
             }
 
-            alert("تم تسليم الواجب بنجاح للمدرس!");
+            alert("أحسنت! تم تسليم الواجب بنجاح.");
             closeModal();
             renderStudentView();
         }
