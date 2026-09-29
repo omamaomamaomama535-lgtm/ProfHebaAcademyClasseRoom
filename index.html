@@ -10,14 +10,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3B82F6', // أزرق هادئ واحترافي
-                        primaryHover: '#2563EB',
-                    }
-                }
-            }
+            theme: { extend: { fontFamily: { sans: ['Inter', 'Tajawal', 'sans-serif'] }, colors: { primary: '#3B82F6' } } }
         }
     </script>
 
@@ -31,109 +24,91 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
-        * { -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Inter', 'Tajawal', sans-serif;
+        /* منع الصفحة من التحرك يمين وشمال نهائياً */
+        html, body { 
+            max-width: 100vw; 
+            overflow-x: hidden; 
             transition: background-color 0.3s, color 0.3s; 
+            padding-bottom: 90px; 
         }
 
-        /* كلاسات التحكم في الظهور والإخفاء (طريقة قوية لمنع التداخل) */
         .app-screen { display: none; }
         .app-screen.active { display: block; }
-        
         .app-view { display: none; }
         .app-view.active { display: block; }
 
         .btn-touch { transition: transform 0.1s ease; }
         .btn-touch:active { transform: scale(0.96); }
 
-        /* النوافذ المنبثقة (Modals) بطريقة مستحيل تتداخل مع الصفحة */
-        .custom-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            align-items: flex-end; /* تظهر من الأسفل */
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .custom-modal.active { display: flex; }
-        .custom-modal-content {
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            background: white;
-            border-radius: 24px 24px 0 0;
-            padding: 24px;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease-out forwards;
-        }
-        .dark .custom-modal-content { background: #1F2937; color: white; }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        .custom-input {
+            @apply w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none;
         }
 
-        /* الجداول */
-        .schedule-table th, .schedule-table td { border: 1px solid #E5E7EB; padding: 12px; text-align: center; }
-        .dark .schedule-table th, .dark .schedule-table td { border-color: #374151; }
-        .schedule-table th { background-color: #F9FAFB; }
-        .dark .schedule-table th { background-color: #111827; }
-        .filled-cell { background-color: #EFF6FF; color: #1D4ED8; font-weight: bold; }
-        .dark .filled-cell { background-color: #1E3A8A; color: #93C5FD; }
+        /* الجداول التفاعلية */
+        .schedule-table { @apply w-full min-w-[600px]; }
+        .schedule-table th, .schedule-table td { @apply border border-slate-200 dark:border-slate-700 p-3 text-center whitespace-nowrap h-[70px]; }
+        .schedule-table th { @apply bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold; }
+        .schedule-cell { @apply bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-sm; }
+        .schedule-cell.filled-cell { @apply bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-bold; }
+        .schedule-cell.clickable:hover { @apply bg-gray-50 dark:bg-gray-800 cursor-pointer; }
+
+        /* النوافذ المنبثقة المستقرة */
+        .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+        .custom-modal.active { display: flex; }
+        .custom-modal-content { width: 100%; max-width: 700px; max-height: 90vh; background: white; border-radius: 24px 24px 0 0; padding: 24px; overflow-y: auto; animation: slideUp 0.3s ease-out forwards; }
+        .dark .custom-modal-content { background: #1F2937; color: white; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .sheet-handle { @apply w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-6; }
 
         /* الإشعارات */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none; }
-        .toast-msg { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; pointer-events: auto; animation: slideDown 0.4s ease, fadeOut 0.4s ease 3s forwards; }
-        .dark .toast-msg { background: #1F2937; border: 1px solid #374151; color: white; }
+        #toast-container { @apply fixed top-5 left-1/2 -translate-x-1/2 z-[10000] flex flex-col gap-3 w-[90%] max-w-[400px] pointer-events-none; }
+        .toast-msg { @apply bg-white dark:bg-slate-800 rounded-xl p-4 shadow-xl flex items-center gap-3 border-l-4 pointer-events-auto text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700; animation: slideDown 0.4s ease, fadeOut 0.4s ease 3s forwards; }
+        .toast-msg.success { @apply border-l-emerald-500; } .toast-msg.error { @apply border-l-red-500; }
         @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } } 
         @keyframes fadeOut { 100% { opacity: 0; display: none; } }
+
+        /* التحميل */
+        #loader-overlay { @apply fixed inset-0 bg-white/90 dark:bg-slate-900/90 z-[10000] flex flex-col items-center justify-center backdrop-blur-sm; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
 
-    <!-- الإشعارات والتحميل -->
     <div id="toast-container"></div>
-    
-    <div id="loader-overlay" class="fixed inset-0 bg-white/90 dark:bg-gray-900/90 z-[10000] flex flex-col items-center justify-center hidden">
+    <div id="loader-overlay" style="display: none;">
         <i class="fas fa-spinner fa-spin text-5xl text-primary mb-4"></i>
         <h2 class="text-xl font-bold" data-i18n="loading">Caricamento in corso...</h2>
     </div>
 
-    <!-- نافذة التأكيد (حذف وغيرها) -->
-    <div id="confirm-modal" class="fixed inset-0 bg-black/50 z-[10000] items-center justify-center hidden">
+    <!-- نافذة التأكيد -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-[10000] items-center justify-center hidden backdrop-blur-sm">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl w-[90%] max-w-[380px] text-center shadow-2xl">
             <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
-            <h3 id="confirm-msg" class="font-bold text-xl mb-6">Sei sicuro?</h3>
+            <h3 id="confirm-msg" class="font-bold text-xl mb-6 text-slate-800 dark:text-slate-100">Sei sicuro?</h3>
             <div class="flex gap-3">
-                <button onclick="closeConfirm()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl btn-touch" data-i18n="cancel">Annulla</button>
-                <button id="confirm-yes-btn" class="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl btn-touch" data-i18n="confirm">Conferma</button>
+                <button onclick="closeConfirmModal()" class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-xl btn-touch" data-i18n="cancel">Annulla</button>
+                <button id="confirm-btn-yes" class="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl btn-touch" data-i18n="confirm">Conferma</button>
             </div>
         </div>
     </div>
 
     <!-- ================= شاشة تسجيل الدخول ================= -->
     <div id="screen-login" class="app-screen active">
-        <div class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative">
+        <!-- أضفنا overflow-hidden هنا لمنع تأثير الدوائر من توسيع الشاشة -->
+        <div class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
             
-            <!-- أزرار تغيير اللغة والمظهر -->
-            <div class="absolute top-6 right-6 flex gap-2" dir="ltr">
+            <div class="absolute top-6 right-6 flex gap-2 z-20" dir="ltr">
                 <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-white dark:bg-gray-700 shadow flex items-center justify-center btn-touch text-gray-600 dark:text-gray-300" id="theme-btn-login"><i class="fas fa-moon"></i></button>
                 <button onclick="toggleLang()" class="w-10 h-10 rounded-full bg-primary text-white font-bold text-xs shadow flex items-center justify-center btn-touch" id="lang-btn-login">AR</button>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 w-full max-w-[400px] text-center shadow-xl border border-gray-100 dark:border-gray-700">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 w-full max-w-[400px] text-center shadow-xl border border-gray-100 dark:border-gray-700 z-10 relative">
                 <div class="w-20 h-20 bg-blue-50 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-graduation-cap text-4xl text-primary"></i>
                 </div>
-                
                 <h1 class="text-2xl font-bold mb-2" data-i18n="app_title">Accademia del Successo</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-8" data-i18n="portal_desc">Portale Ufficiale di Accesso</p>
-                
                 <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
                 <div class="g_id_signin flex justify-center w-full" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
             </div>
@@ -141,9 +116,7 @@
     </div>
 
     <!-- ================= المنصة الرئيسية ================= -->
-    <div id="screen-main" class="app-screen pb-24">
-        
-        <!-- الهيدر -->
+    <div id="screen-main" class="app-screen">
         <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="bg-primary text-white w-10 h-10 flex items-center justify-center rounded-full"><i class="fas fa-user"></i></div>
@@ -159,25 +132,22 @@
             </div>
         </header>
 
-        <!-- المحتوى الداخلي -->
-        <main class="p-4 max-w-4xl mx-auto mt-4">
+        <main class="p-4 max-w-5xl mx-auto mt-2">
             
             <!-- [1] الإدارة -->
             <div id="view-admin" class="app-view">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800 dark:text-white"><i class="fas fa-users-cog text-primary"></i> <span data-i18n="admin_area">Gestione Utenze</span></h2>
-                
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users-cog text-primary"></i> <span data-i18n="admin_area">Gestione Utenze</span></h2>
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
                     <h3 class="font-bold mb-4" data-i18n="new_user">Nuovo Utente</h3>
-                    <input type="text" id="add-user-name" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-primary focus:outline-none mb-3" placeholder="Nome">
-                    <input type="email" id="add-user-email" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-primary focus:outline-none mb-3 text-left" dir="ltr" placeholder="Email">
-                    <select id="add-user-role" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:border-primary focus:outline-none mb-4">
+                    <input type="text" id="add-user-name" class="custom-input" placeholder="Nome">
+                    <input type="email" id="add-user-email" class="custom-input text-left" dir="ltr" placeholder="Email">
+                    <select id="add-user-role" class="custom-input">
                         <option value="student" data-i18n="role_student">Studente</option>
                         <option value="teacher" data-i18n="role_teacher">Docente</option>
                         <option value="admin" data-i18n="role_admin">Amministratore</option>
                     </select>
-                    <button onclick="addUser()" class="w-full bg-primary text-white font-bold py-3 rounded-xl btn-touch" data-i18n="btn_register">Registra Utente</button>
+                    <button onclick="addUser()" class="w-full bg-primary text-white font-bold py-3 mt-4 rounded-xl btn-touch" data-i18n="btn_register">Registra Utente</button>
                 </div>
-
                 <h3 class="font-bold mb-4" data-i18n="reg_users">Utenti Registrati</h3>
                 <div id="admin-users-list" class="space-y-3"></div>
             </div>
@@ -192,45 +162,30 @@
                 <div id="teacher-publish-box" class="block">
                     <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
                         <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="task_title">Titolo dell'Attività</label>
-                        <input type="text" id="hw-title" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 mt-1">
-                        
+                        <input type="text" id="hw-title" class="custom-input mb-4 mt-1">
                         <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="deadline">Data di Scadenza</label>
-                        <input type="date" id="hw-date" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 mt-1">
-                        
+                        <input type="date" id="hw-date" class="custom-input mb-4 mt-1">
                         <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="class_label">Classe</label>
-                        <select id="hw-grade" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 mt-1"></select>
-                        
+                        <select id="hw-grade" class="custom-input mb-4 mt-1"></select>
                         <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="subject_label">Materia</label>
-                        <select id="hw-subject" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 mt-1"></select>
-                        
+                        <select id="hw-subject" class="custom-input mb-4 mt-1"></select>
                         <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="instructions">Istruzioni</label>
-                        <textarea id="hw-desc" rows="3" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 mt-1 resize-none"></textarea>
-                        
-                        <button onclick="addHomework()" class="w-full bg-primary text-white font-bold py-3 rounded-xl btn-touch" data-i18n="btn_publish">Pubblica Attività</button>
+                        <textarea id="hw-desc" rows="3" class="custom-input mb-4 mt-1 resize-none"></textarea>
+                        <button onclick="addHomework()" class="w-full bg-primary text-white font-bold py-3 mt-2 rounded-xl btn-touch" data-i18n="btn_publish">Pubblica Attività</button>
                     </div>
                 </div>
                 <div id="teacher-track-box" class="hidden"><div id="teacher-hw-list" class="space-y-4"></div></div>
             </div>
 
-            <!-- [3] الجدول -->
+            <!-- [3] الجدول التفاعلي -->
             <div id="view-schedule" class="app-view">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="far fa-calendar-alt text-emerald-500"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
-                
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6" id="schedule-admin-controls">
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div><label class="text-xs font-bold text-gray-500 uppercase" data-i18n="day_label">Giorno</label><select id="sch-day" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mt-1"></select></div>
-                        <div><label class="text-xs font-bold text-gray-500 uppercase" data-i18n="hour_label">Ora</label><select id="sch-slot" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mt-1"></select></div>
-                    </div>
-                    <label class="text-xs font-bold text-gray-500 uppercase" data-i18n="subj_class">Materia e Classe</label>
-                    <input type="text" id="sch-subject" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mt-1 mb-4">
-                    
-                    <div class="flex gap-2">
-                        <button onclick="addScheduleSlot()" class="flex-grow bg-emerald-500 text-white font-bold py-3 rounded-xl btn-touch" data-i18n="btn_save">Salva Modifica</button>
-                        <button onclick="clearSchedule()" class="w-14 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-xl flex items-center justify-center btn-touch"><i class="fas fa-trash"></i></button>
-                    </div>
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i class="far fa-calendar-alt text-primary"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
+                    <!-- زر مسح الجدول يظهر فقط للإدارة والمعلمين -->
+                    <button id="btn-clear-schedule" onclick="clearSchedule()" class="bg-red-100 dark:bg-red-900/30 text-red-500 px-3 py-1.5 rounded-lg text-sm font-bold btn-touch" style="display:none;"><i class="fas fa-trash"></i> <span data-i18n="clear_sch">Svuota</span></button>
                 </div>
-
-                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800" id="schedule-container"></div>
+                <p id="schedule-hint" class="text-sm text-gray-500 mb-4" style="display:none;" data-i18n="click_to_edit">Tocca un riquadro per modificare la materia.</p>
+                <div class="w-full overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800" id="manage-schedule-container"></div>
             </div>
 
             <!-- [4] الطالب -->
@@ -239,20 +194,33 @@
                     <button onclick="switchStudentTab('hw')" id="tab-s-hw" class="flex-1 py-2 font-bold rounded-lg text-sm bg-white dark:bg-gray-700 text-primary shadow-sm" data-i18n="tab_assigned">Attività Assegnate</button>
                     <button onclick="switchStudentTab('sch')" id="tab-s-sch" class="flex-1 py-2 font-bold rounded-lg text-sm text-gray-500 dark:text-gray-400 bg-transparent" data-i18n="tab_schedule">Orario Lezioni</button>
                 </div>
-                
                 <div id="student-hw-box" class="block"><div id="student-hw-list" class="space-y-4"></div></div>
-                <div id="student-schedule-box" class="hidden"><div id="display-schedule-container" class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800"></div></div>
+                <div id="student-schedule-box" class="hidden"><div class="w-full overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800" id="display-schedule-container"></div></div>
             </div>
 
         </main>
         
-        <!-- الشريط السفلي للروابط -->
-        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-3 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]"></nav>
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-3 z-40"></nav>
     </div>
 
-    <!-- ================= النوافذ المنبثقة (Modals) المنفصلة تماماً ================= -->
+    <!-- ================= النوافذ المنبثقة المستقرة ================= -->
     
-    <!-- 1. نافذة تسليم الواجب (للطالب) -->
+    <!-- 1. نافذة التعديل السريع للمربع في الجدول -->
+    <div id="modal-edit-cell" class="custom-modal">
+        <div class="custom-modal-content !max-w-[400px]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-primary" id="edit-cell-title">Modifica Orario</h3>
+                <button onclick="closeModal('modal-edit-cell')" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex justify-center items-center text-gray-500"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="text" id="edit-cell-input" class="custom-input mb-4" placeholder="Materia e Classe">
+            <div class="flex gap-2">
+                <button onclick="saveCell()" class="flex-1 bg-primary text-white font-bold py-3 rounded-xl btn-touch" data-i18n="btn_save">Salva</button>
+                <button onclick="deleteCell()" class="w-14 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-xl flex items-center justify-center btn-touch"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. نافذة تسليم الواجب -->
     <div id="modal-submit" class="custom-modal">
         <div class="custom-modal-content">
             <div class="sheet-handle"></div>
@@ -262,7 +230,7 @@
             </div>
             <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl mb-4 text-primary font-bold text-sm" id="sheet-hw-title"></div>
             <label class="block font-bold text-sm mb-2" data-i18n="text_note">Testo / Note:</label>
-            <textarea id="submit-text" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 mb-4 focus:outline-none focus:border-primary resize-none" rows="3"></textarea>
+            <textarea id="submit-text" class="custom-input mb-4 resize-none" rows="3"></textarea>
             
             <label class="block font-bold text-sm mb-2" data-i18n="attach_file">Allega File:</label>
             <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center bg-gray-50 dark:bg-gray-800 mb-4 cursor-pointer">
@@ -270,12 +238,11 @@
                 <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
                 <p id="file-name-display" class="text-sm font-bold text-primary" data-i18n="tap_file">Tocca per selezionare un file</p>
             </div>
-            
-            <button id="confirm-submit-btn" onclick="confirmSubmission()" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl btn-touch" data-i18n="btn_send">Invia Consegna</button>
+            <button id="confirm-submit-btn" onclick="confirmSubmission()" class="w-full bg-emerald-500 text-white font-bold py-3.5 rounded-xl btn-touch" data-i18n="btn_send">Invia Consegna</button>
         </div>
     </div>
 
-    <!-- 2. نافذة قراءة الإجابات (للمعلم) -->
+    <!-- 3. نافذة إجابات الطلاب للمعلم -->
     <div id="modal-teacher" class="custom-modal">
         <div class="custom-modal-content flex flex-col h-[90vh]">
             <div class="sheet-handle"></div>
@@ -287,7 +254,7 @@
         </div>
     </div>
 
-    <!-- 3. نافذة عرض الصور / PDF -->
+    <!-- 4. نافذة قراءة الملفات -->
     <div id="modal-viewer" class="custom-modal z-[11000]">
         <div class="custom-modal-content flex flex-col h-[95vh] !p-4">
             <div class="flex justify-between items-center mb-4 shrink-0">
@@ -312,32 +279,32 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
 
-        // ================= المتغيرات العامة وقواعد البيانات =================
+        // ================= المتغيرات واللغات =================
         let homeworks = []; let scheduleData = {}; let allowedUsers = []; 
-        let currentUser = null; let activeHwId = null;
+        let currentUser = null; let activeHwId = null; let activeCellKey = null;
         let currentLang = localStorage.getItem('appLang') || 'it';
         let isDarkMode = localStorage.getItem('appTheme') === 'dark';
 
         const i18n = {
             it: {
-                app_title: "Accademia del Successo", portal_desc: "Portale Ufficiale di Accesso", loading: "Caricamento in corso...", confirm_msg: "Sei sicuro?",
+                app_title: "Accademia del Successo", portal_desc: "Portale Ufficiale di Accesso", loading: "Caricamento...", confirm_msg: "Sei sicuro?",
                 cancel: "Annulla", confirm: "Conferma", admin_area: "Gestione Utenze", new_user: "Nuovo Utente", name_label: "Nome", email_label: "Email",
                 role_label: "Ruolo", role_student: "Studente", role_teacher: "Docente", role_admin: "Admin", btn_register: "Registra Utente", reg_users: "Utenti", tab_assign: "Assegna Compito",
                 tab_track: "Consegne", task_title: "Titolo", deadline: "Scadenza", class_label: "Classe", subject_label: "Materia", instructions: "Istruzioni",
                 btn_publish: "Pubblica", day_label: "Giorno", hour_label: "Ora", subj_class: "Materia e Classe", btn_save: "Salva", schedule_title: "Orario Lezioni",
                 current_schedule: "Orario Attuale", tab_assigned: "Attività", tab_schedule: "Orario", submit_task: "Svolgi Compito", submitted: "Consegnato", text_note: "Note:",
                 attach_file: "Allega File:", btn_send: "Invia", teacher_view_subs: "Elaborati Ricevuti", no_subs: "Nessuna consegna.", open_attachment: "Apri File",
-                no_tasks: "Nessuna attività.", file_viewer: "Visualizzatore", close: "Chiudi", tap_file: "Tocca per allegare", nav_admin: "Utenze", nav_hw: "Attività", nav_sch: "Orario", nav_home: "Home"
+                no_tasks: "Nessuna attività.", file_viewer: "Visualizzatore", close: "Chiudi", tap_file: "Tocca per allegare", nav_admin: "Utenze", nav_hw: "Attività", nav_sch: "Orario", nav_home: "Home", clear_sch: "Svuota", click_to_edit: "Tocca un riquadro per modificare la materia."
             },
             ar: {
                 app_title: "أكاديمية النجاح", portal_desc: "بوابة الدخول الرسمية", loading: "جاري التحميل...", confirm_msg: "هل أنت متأكد؟",
                 cancel: "إلغاء", confirm: "تأكيد", admin_area: "إدارة النظام", new_user: "مستخدم جديد", name_label: "الاسم", email_label: "الإيميل",
                 role_label: "الصلاحية", role_student: "طالب", role_teacher: "معلم", role_admin: "مدير", btn_register: "حفظ", reg_users: "المسجلون", tab_assign: "نشر واجب",
                 tab_track: "التسليمات", task_title: "العنوان", deadline: "تاريخ التسليم", class_label: "الصف", subject_label: "المادة", instructions: "التعليمات",
-                btn_publish: "نشر", day_label: "اليوم", hour_label: "الحصة", subj_class: "المادة والصف", btn_save: "حفظ", schedule_title: "الجدول",
+                btn_publish: "نشر", day_label: "اليوم", hour_label: "الساعة", subj_class: "المادة والصف", btn_save: "حفظ", schedule_title: "الجدول",
                 current_schedule: "الجدول الحالي", tab_assigned: "الواجبات", tab_schedule: "الجدول", submit_task: "تسليم", submitted: "تم التسليم", text_note: "ملاحظات:",
                 attach_file: "إرفاق ملف:", btn_send: "إرسال", teacher_view_subs: "إجابات الطلاب", no_subs: "لا يوجد تسليمات.", open_attachment: "فتح الملف",
-                no_tasks: "لا توجد واجبات.", file_viewer: "عارض الملفات", close: "إغلاق", tap_file: "اضغط لإرفاق ملف", nav_admin: "الإدارة", nav_hw: "الواجبات", nav_sch: "الجدول", nav_home: "الرئيسية"
+                no_tasks: "لا توجد واجبات.", file_viewer: "عارض الملفات", close: "إغلاق", tap_file: "اضغط لإرفاق ملف", nav_admin: "الإدارة", nav_hw: "الواجبات", nav_sch: "الجدول", nav_home: "الرئيسية", clear_sch: "مسح", click_to_edit: "اضغط على المربع لتعديل المادة."
             }
         };
 
@@ -345,31 +312,32 @@
             it: {
                 subjects: ["Italiano", "Matematica", "Storia", "Geografia", "Inglese", "Scienze", "Arte", "Tecnologia", "Musica", "Ed. Fisica", "Religione", "Fisica", "Chimica", "Informatica", "Altro"],
                 grades: { "Scuola Primaria": ["1ª Primaria", "2ª Primaria", "3ª Primaria", "4ª Primaria", "5ª Primaria"], "Scuola Media": ["1ª Media", "2ª Media", "3ª Media"], "Scuola Superiore": ["1ª Superiore", "2ª Superiore", "3ª Superiore", "4ª Superiore", "5ª Superiore"] },
-                days: ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], slots: ["1ª Ora", "2ª Ora", "3ª Ora", "4ª Ora", "5ª Ora", "6ª Ora"]
+                days: ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], 
+                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] // الساعات
             },
             ar: {
                 subjects: ["الإيطالية", "الرياضيات", "التاريخ", "الجغرافيا", "الإنجليزية", "العلوم", "الفنون", "التكنولوجيا", "الموسيقى", "التربية البدنية", "الدين", "الفيزياء", "الكيمياء", "معلوماتية", "أخرى"],
                 grades: { "الابتدائية": ["الأول الابتدائي", "الثاني الابتدائي", "الثالث الابتدائي", "الرابع الابتدائي", "الخامس الابتدائي"], "المتوسطة": ["الأول المتوسط", "الثاني المتوسط", "الثالث المتوسط"], "الثانوية": ["الأول الثانوي", "الثاني الثانوي", "الثالث الثانوي", "الرابع الثانوي", "الخامس الثانوي"] },
-                days: ["الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], slots: ["الحصة 1", "الحصة 2", "الحصة 3", "الحصة 4", "الحصة 5", "الحصة 6"]
+                days: ["الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], 
+                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] // الساعات
             }
         };
 
         function t(key) { return i18n[currentLang][key] || key; }
 
-        // ================= الإعدادات الأساسية =================
+        // ================= التهيئة =================
         document.addEventListener('DOMContentLoaded', () => {
             applyTheme(isDarkMode); applyLanguage(currentLang);
         });
 
-        function toggleTheme() { isDarkMode = !isDarkMode; localStorage.setItem('appTheme', isDarkMode ? 'dark' : 'light'); applyTheme(isDarkMode); }
+        window.toggleTheme = function() { isDarkMode = !isDarkMode; localStorage.setItem('appTheme', isDarkMode ? 'dark' : 'light'); applyTheme(isDarkMode); }
         function applyTheme(dark) {
             if (dark) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark');
             let ic = dark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon';
-            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`;
-            document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
+            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`; document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
         }
 
-        function toggleLang() { currentLang = currentLang === 'it' ? 'ar' : 'it'; localStorage.setItem('appLang', currentLang); applyLanguage(currentLang); }
+        window.toggleLang = function() { currentLang = currentLang === 'it' ? 'ar' : 'it'; localStorage.setItem('appLang', currentLang); applyLanguage(currentLang); }
         function applyLanguage(lang) {
             document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             let txt = lang === 'it' ? 'AR' : 'IT';
@@ -382,41 +350,38 @@
                 if(currentUser.role === 'admin') renderAdminUsers();
                 if(currentUser.role === 'teacher') renderTeacherTracking();
                 if(currentUser.role === 'student') renderStudentHomeworks();
-                drawSchedule('manage-schedule-container'); drawSchedule('display-schedule-container');
+                
+                let isEditable = (currentUser.role === 'admin' || currentUser.role === 'teacher');
+                drawSchedule('manage-schedule-container', isEditable); 
+                drawSchedule('display-schedule-container', false);
             }
         }
 
         function populateDropdowns() {
             const data = schoolData[currentLang];
-            let dh = ''; data.days.forEach((d, i) => dh += `<option value="${i}">${d}</option>`); document.getElementById('sch-day').innerHTML = dh;
-            let sh = ''; data.slots.forEach((s, i) => sh += `<option value="${i}">${s}</option>`); document.getElementById('sch-slot').innerHTML = sh;
             let subh = `<option value="">- ${t('subject_label')} -</option>`; data.subjects.forEach(s => subh += `<option value="${s}">${s}</option>`); document.getElementById('hw-subject').innerHTML = subh;
             let gh = `<option value="">- ${t('class_label')} -</option>`; for (const [group, grades] of Object.entries(data.grades)) { gh += `<optgroup label="${group}">`; grades.forEach(g => gh += `<option value="${g}">${g}</option>`); gh += `</optgroup>`; } document.getElementById('hw-grade').innerHTML = gh;
         }
 
-        // ================= الإشعارات والنوافذ =================
+        // ================= النوافذ =================
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             let icon = type === 'success' ? '<i class="fas fa-check-circle text-emerald-500 text-xl"></i>' : '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
-            toast.className = 'toast-msg'; toast.innerHTML = `${icon} <span class="font-bold text-sm">${msg}</span>`;
+            toast.className = `toast-msg ${type}`; toast.innerHTML = `${icon} <span class="font-bold text-sm">${msg}</span>`;
             container.appendChild(toast); setTimeout(() => { if(toast.parentElement) toast.remove(); }, 3000);
         }
         function showLoader() { document.getElementById('loader-overlay').classList.remove('hidden'); document.getElementById('loader-overlay').classList.add('flex'); }
         function hideLoader() { document.getElementById('loader-overlay').classList.add('hidden'); document.getElementById('loader-overlay').classList.remove('flex'); }
 
         let confirmCallback = null;
-        function showConfirm(msg, callback) {
-            document.getElementById('confirm-msg').innerText = msg;
-            document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex');
-            confirmCallback = callback;
-        }
-        function closeConfirm() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
-        document.getElementById('confirm-yes-btn').addEventListener('click', () => { closeConfirm(); if(confirmCallback) confirmCallback(); });
+        function showConfirm(msg, callback) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex'); confirmCallback = callback; }
+        window.closeConfirmModal = function() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
+        document.getElementById('confirm-yes-btn').addEventListener('click', () => { closeConfirmModal(); if(confirmCallback) confirmCallback(); });
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
+        window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ================= تسجيل الدخول وقاعدة البيانات =================
+        // ================= الدخول =================
         function parseJwt(token) { var base64Url = token.split('.')[1]; var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''))); }
 
         async function fetchServerData() {
@@ -425,7 +390,7 @@
                 const hSnap = await db.collection('homeworks').get(); homeworks = hSnap.docs.map(doc => doc.data());
                 const sDoc = await db.collection('settings').doc('schedule').get(); if (sDoc.exists) scheduleData = sDoc.data();
                 return true;
-            } catch (error) { showToast("Database Connection Error", "error"); return false; }
+            } catch (error) { showToast("Error connecting to database", "error"); return false; }
         }
 
         window.handleGoogleLogin = async function(response) {
@@ -442,14 +407,8 @@
             if (user) loginAs(user.role, user.name || name, email); else showToast("Access Denied.", "error");
         }
 
-        function switchScreen(screenId) {
-            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-        function switchView(viewId) {
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
+        function switchScreen(screenId) { document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); }
+        function switchView(viewId) { document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
 
         function loginAs(role, name, email) {
             currentUser = { role, name, email };
@@ -462,30 +421,32 @@
             else if(role === 'teacher') navigateTo('view-teacher', 'nav-hw');
             else navigateTo('view-student', 'nav-student');
         }
-        function logout() { currentUser = null; switchScreen('screen-login'); }
+        window.logout = function() { currentUser = null; switchScreen('screen-login'); }
 
-        // ================= شريط التنقل السفلي =================
+        // ================= التنقل =================
         function buildBottomNav() {
             const nav = document.getElementById('bottom-nav'); nav.innerHTML = '';
-            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
+            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer transition-colors" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
 
             if(currentUser.role === 'admin') nav.innerHTML += cItem('nav-admin', 'fa-shield-alt', t('nav_admin'), 'view-admin');
-            if(currentUser.role === 'admin' || currentUser.role === 'teacher') {
-                nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher');
-                nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule');
-            }
+            if(currentUser.role === 'admin' || currentUser.role === 'teacher') { nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher'); nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule'); }
             if(currentUser.role === 'student') nav.innerHTML += cItem('nav-student', 'fa-home', t('nav_home'), 'view-student');
         }
 
-        function navigateTo(viewId, navId) {
+        window.navigateTo = function(viewId, navId) {
             switchView(viewId);
             document.querySelectorAll('#bottom-nav > div').forEach(el => { el.classList.remove('text-primary'); el.classList.add('text-gray-400'); });
             document.getElementById(navId).classList.remove('text-gray-400'); document.getElementById(navId).classList.add('text-primary');
 
             if(viewId === 'view-admin') renderAdminUsers();
-            if(viewId === 'view-schedule') { document.getElementById('schedule-admin-controls').style.display = (currentUser.role==='admin' || currentUser.role==='teacher') ? 'block' : 'none'; drawSchedule('manage-schedule-container'); }
+            if(viewId === 'view-schedule') { 
+                let isEditable = (currentUser.role === 'admin' || currentUser.role === 'teacher');
+                document.getElementById('btn-clear-schedule').style.display = isEditable ? 'inline-block' : 'none';
+                document.getElementById('schedule-hint').style.display = isEditable ? 'block' : 'none';
+                drawSchedule('manage-schedule-container', isEditable); 
+            }
             if(viewId === 'view-teacher') switchTeacherTab('publish');
-            if(viewId === 'view-student') { renderStudentHomeworks(); drawSchedule('display-schedule-container'); switchStudentTab('hw'); }
+            if(viewId === 'view-student') { renderStudentHomeworks(); drawSchedule('display-schedule-container', false); switchStudentTab('hw'); }
             window.scrollTo(0,0);
         }
 
@@ -502,7 +463,7 @@
             allowedUsers.forEach(u => {
                 let rName = u.role === 'admin' ? t('role_admin') : (u.role === 'teacher' ? t('role_teacher') : t('role_student'));
                 let badge = u.role === 'admin' ? 'bg-red-100 text-red-600 dark:bg-red-900/30' : (u.role === 'teacher' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30');
-                let trash = u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 btn-touch"><i class="fas fa-trash-alt"></i></button>` : '';
+                let trash = u.role !== 'admin' ? `<button onclick="removeUser('${u.email}')" class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 btn-touch flex justify-center items-center"><i class="fas fa-trash-alt"></i></button>` : '';
                 html += `<div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 flex justify-between items-center shadow-sm mb-3"><div><p class="font-bold">${u.name}</p><p class="text-xs text-gray-500 mt-1 mb-2" dir="ltr">${u.email}</p><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${badge}">${rName}</span></div>${trash}</div>`;
             }); document.getElementById('admin-users-list').innerHTML = html;
         }
@@ -526,7 +487,7 @@
 
         function renderTeacherTracking() {
             let html = ''; let sortedHw = [...homeworks].sort((a, b) => b.timestamp - a.timestamp);
-            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400">${t('no_tasks')}</div>`; return; }
+            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400 font-bold">${t('no_tasks')}</div>`; return; }
             sortedHw.forEach(hw => {
                 let subCount = hw.submissions ? hw.submissions.length : 0;
                 let badge = subCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
@@ -554,23 +515,49 @@
             openModal('modal-viewer');
         }
 
-        // ================= الجدول =================
-        window.addScheduleSlot = async function() {
-            let dayIdx = document.getElementById('sch-day').value; let slotIdx = document.getElementById('sch-slot').value; let subject = document.getElementById('sch-subject').value.trim();
-            let key = `${dayIdx}-${slotIdx}`; if(subject) scheduleData[key] = subject; else delete scheduleData[key];
-            try { showLoader(); await db.collection('settings').doc('schedule').set(scheduleData); drawSchedule('manage-schedule-container'); document.getElementById('sch-subject').value=''; showToast('Success', 'success'); } catch(e){} finally{ hideLoader(); }
+        // ================= الجدول (التفاعل الذكي) =================
+        window.openEditCellModal = function(dayIdx, slotIdx) {
+            activeCellKey = `${dayIdx}-${slotIdx}`;
+            let dayName = schoolData[currentLang].days[dayIdx];
+            let slotName = schoolData[currentLang].slots[slotIdx];
+            document.getElementById('edit-cell-title').innerText = `${dayName} - ${slotName}`;
+            document.getElementById('edit-cell-input').value = scheduleData[activeCellKey] || '';
+            openModal('modal-edit-cell');
         }
-        window.clearSchedule = function() { showConfirm(t('confirm_msg'), () => { showLoader(); db.collection('settings').doc('schedule').set({}).then(()=>{ scheduleData={}; drawSchedule('manage-schedule-container'); hideLoader(); }); }); }
 
-        function drawSchedule(containerId) {
+        window.saveCell = async function() {
+            let val = document.getElementById('edit-cell-input').value.trim();
+            if(val) scheduleData[activeCellKey] = val; else delete scheduleData[activeCellKey];
+            try { showLoader(); await db.collection('settings').doc('schedule').set(scheduleData); drawSchedule('manage-schedule-container', true); closeModal('modal-edit-cell'); showToast('Success', 'success'); } catch(e){} finally{ hideLoader(); }
+        }
+
+        window.deleteCell = async function() {
+            delete scheduleData[activeCellKey];
+            try { showLoader(); await db.collection('settings').doc('schedule').set(scheduleData); drawSchedule('manage-schedule-container', true); closeModal('modal-edit-cell'); showToast('Success', 'success'); } catch(e){} finally{ hideLoader(); }
+        }
+
+        window.clearSchedule = function() {
+            showConfirm(t('confirm_msg'), () => { showLoader(); db.collection('settings').doc('schedule').set({}).then(()=>{ scheduleData={}; drawSchedule('manage-schedule-container', true); hideLoader(); }); });
+        }
+
+        function drawSchedule(containerId, isEditable = false) {
             let data = schoolData[currentLang];
-            let html = `<div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700"><table class="schedule-table"><thead><tr><th class="w-24">${t('day_label')}</th>`;
+            let html = `<table class="schedule-table"><thead><tr><th class="w-24 border-r border-slate-200 dark:border-slate-700">${t('day_label')}</th>`;
             data.slots.forEach(s => html += `<th>${s}</th>`); html += `</tr></thead><tbody>`;
+            
             data.days.forEach((dayStr, dayIdx) => {
                 html += `<tr><td class="font-bold text-xs uppercase bg-gray-50 dark:bg-gray-800 text-gray-500">${dayStr.substring(0,3)}</td>`;
-                data.slots.forEach((slotStr, slotIdx) => { let sub = scheduleData[`${dayIdx}-${slotIdx}`] || ''; let cellClass = sub ? 'filled-cell' : ''; html += `<td class="${cellClass}"><div class="line-clamp-2">${sub || '-'}</div></td>`; });
+                data.slots.forEach((slotStr, slotIdx) => {
+                    let sub = scheduleData[`${dayIdx}-${slotIdx}`] || '';
+                    let cellClass = sub ? 'filled-cell' : '';
+                    let action = isEditable ? `onclick="openEditCellModal(${dayIdx}, ${slotIdx})" class="schedule-cell ${cellClass} clickable"` : `class="schedule-cell ${cellClass}"`;
+                    let content = sub ? sub : (isEditable ? '<i class="fas fa-plus text-gray-300 dark:text-gray-600"></i>' : '-');
+                    
+                    html += `<td ${action}><div class="line-clamp-2">${content}</div></td>`;
+                });
                 html += `</tr>`;
-            }); html += `</tbody></table></div>`;
+            });
+            html += `</tbody></table>`;
             const container = document.getElementById(containerId); if(container) container.innerHTML = html;
         }
 
@@ -590,7 +577,7 @@
                 let hasSub = hw.submissions && hw.submissions.some(s => s.email === currentUser.email);
                 let btnHtml = hasSub ? `<div class="mt-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-bold py-3 rounded-xl flex justify-center items-center"><i class="fas fa-check-circle mr-2 ml-2"></i> ${t('submitted')}</div>` : `<button onclick="openStudentSheet('${hw.id}')" class="w-full mt-4 bg-primary text-white font-bold py-3 rounded-xl btn-touch"><i class="fas fa-file-upload"></i> ${t('submit_task')}</button>`;
                 let borderClass = hasSub ? 'border-emerald-500' : 'border-primary';
-                html += `<div class="bg-white dark:bg-gray-800 border-l-4 ${borderClass} rounded-xl p-5 shadow-sm mb-4 border-y border-r border-gray-100 dark:border-gray-700"><div class="flex justify-between items-start mb-3"><h3 class="font-bold text-lg">${hw.title}</h3><span class="px-2 py-1 rounded text-[10px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${hw.grade}</span></div><div class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-blue-50 dark:bg-blue-900/30 text-primary mb-3"><i class="fas fa-book text-xs"></i><span class="text-xs font-bold">${hw.subject}</span></div><div class="p-3 rounded-lg border bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 mb-3"><p class="text-sm">${hw.desc}</p></div><div class="text-xs font-bold text-red-500"><i class="far fa-calendar-times"></i> ${t('deadline')}: ${hw.date}</div>${btnHtml}</div>`;
+                html += `<div class="bg-white dark:bg-gray-800 border-l-4 ${borderClass} rounded-xl p-5 shadow-sm mb-4 border-y border-r border-gray-100 dark:border-gray-700"><div class="flex justify-between items-start mb-3"><h3 class="font-bold text-lg">${hw.title}</h3><span class="px-2 py-1 rounded text-[10px] font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">${hw.grade}</span></div><div class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-blue-50 dark:bg-blue-900/30 text-primary mb-3"><i class="fas fa-book text-xs"></i><span class="text-xs font-bold">${hw.subject}</span></div><div class="p-3 rounded-lg border bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 mb-3"><p class="text-sm whitespace-pre-wrap">${hw.desc}</p></div><div class="text-xs font-bold text-red-500"><i class="far fa-calendar-times"></i> ${t('deadline')}: ${hw.date}</div>${btnHtml}</div>`;
             }); document.getElementById('student-hw-list').innerHTML = html;
         }
 
@@ -625,11 +612,6 @@
 
             if (file) { let reader = new FileReader(); reader.onload = function(e) { saveToDb(e.target.result, file.type, file.name); }; reader.readAsDataURL(file); } else { saveToDb(); }
         }
-
-        // منع النوافذ من الإغلاق عند النقر بداخلها، وإغلاقها عند النقر في الخارج
-        document.querySelectorAll('.custom-modal').forEach(modal => {
-            modal.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
-        });
     </script>
 </body>
 </html>
