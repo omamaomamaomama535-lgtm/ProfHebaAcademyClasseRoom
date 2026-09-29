@@ -1,20 +1,15 @@
 <!DOCTYPE html>
-<html lang="it" dir="ltr" id="html-root" class="bg-slate-50 dark:bg-slate-950">
+<html lang="it" dir="ltr" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Accademia del Successo</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Inter', 'Tajawal', 'sans-serif'] }, colors: { primary: '#3B82F6' } } }
-        }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter', 'Tajawal', 'sans-serif'] }, colors: { primary: '#3B82F6' } } } }
     </script>
 
-    <!-- Google Sign-In & Icons -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -26,41 +21,24 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
-        /* تفعيل تأثير المط (Bounce) الاحترافي مع دمج لون الخلفية */
-        html {
-            background-color: #f8fafc;
-            transition: background-color 0.3s;
-            overscroll-behavior-y: auto;
-        }
-        html.dark {
-            background-color: #020617; /* Slate 950 */
-        }
+        /* تفعيل تأثير السحب المطاطي (Overscroll Bounce) */
+        html { background-color: #f8fafc; transition: background-color 0.3s; overscroll-behavior-y: auto; }
+        html.dark { background-color: #020617; }
         
-        /* منع الصفحة من التحرك يمين وشمال مع ضمان مرونة السحب الرأسي */
         body { 
-            max-width: 100vw; 
-            overflow-x: hidden; 
-            overflow-y: auto;
-            min-height: 101vh; /* خدعة لإجبار المتصفح على تفعيل الأنيميشن المطاطي دائماً */
-            -webkit-overflow-scrolling: touch; /* سحب ناعم جداً على الهواتف */
-            transition: color 0.3s; 
-            padding-bottom: 90px; 
-            background: transparent;
+            max-width: 100vw; overflow-x: hidden; overflow-y: auto;
+            min-height: 101vh; -webkit-overflow-scrolling: touch; 
+            transition: color 0.3s; padding-bottom: 90px; background: transparent;
         }
 
-        .app-screen { display: none; }
-        .app-screen.active { display: block; }
-        .app-view { display: none; }
-        .app-view.active { display: block; }
+        .app-screen, .app-view { display: none; }
+        .app-screen.active, .app-view.active { display: block; }
 
         .btn-touch { transition: transform 0.1s ease; }
         .btn-touch:active { transform: scale(0.96); }
 
-        .custom-input {
-            @apply w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none;
-        }
+        .custom-input { @apply w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none; }
 
-        /* الجداول التفاعلية */
         .schedule-table { @apply w-full min-w-[600px]; }
         .schedule-table th, .schedule-table td { @apply border border-slate-200 dark:border-slate-700 p-3 text-center whitespace-nowrap h-[70px]; }
         .schedule-table th { @apply bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold; }
@@ -68,7 +46,6 @@
         .schedule-cell.filled-cell { @apply bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-bold; }
         .schedule-cell.clickable:hover { @apply bg-gray-50 dark:bg-gray-800 cursor-pointer; }
 
-        /* النوافذ المنبثقة */
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
         .custom-modal.active { display: flex; }
         .custom-modal-content { width: 100%; max-width: 700px; max-height: 90vh; background: white; border-radius: 24px 24px 0 0; padding: 24px; overflow-y: auto; animation: slideUp 0.3s ease-out forwards; }
@@ -76,13 +53,10 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .sheet-handle { @apply w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-6; }
 
-        /* الإشعارات */
         #toast-container { @apply fixed top-5 left-1/2 -translate-x-1/2 z-[10000] flex flex-col gap-3 w-[90%] max-w-[400px] pointer-events-none; }
         .toast-msg { @apply bg-white dark:bg-slate-800 rounded-xl p-4 shadow-xl flex items-center gap-3 border-l-4 pointer-events-auto text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700; animation: slideDown 0.4s ease, fadeOut 0.4s ease 3s forwards; }
         .toast-msg.success { @apply border-l-emerald-500; } .toast-msg.error { @apply border-l-red-500; }
-        @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } } 
-        @keyframes fadeOut { 100% { opacity: 0; display: none; } }
-
+        @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } } @keyframes fadeOut { 100% { opacity: 0; display: none; } }
         #loader-overlay { @apply fixed inset-0 bg-white/90 dark:bg-slate-900/90 z-[10000] flex flex-col items-center justify-center backdrop-blur-sm; }
     </style>
 </head>
@@ -94,7 +68,6 @@
         <h2 class="text-xl font-bold" data-i18n="loading">Caricamento in corso...</h2>
     </div>
 
-    <!-- نافذة التأكيد -->
     <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-[10000] items-center justify-center hidden backdrop-blur-sm">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl w-[90%] max-w-[380px] text-center shadow-2xl">
             <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
@@ -115,21 +88,32 @@
                 <button onclick="toggleLang()" class="w-10 h-10 rounded-full bg-primary text-white font-bold text-xs shadow flex items-center justify-center btn-touch" id="lang-btn-login">AR</button>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 w-full max-w-[400px] text-center shadow-xl border border-gray-100 dark:border-gray-700 z-10 relative">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 w-full max-w-[400px] text-center shadow-xl border border-gray-100 dark:border-gray-700 z-10 relative mt-10">
                 <div class="w-20 h-20 bg-blue-50 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-graduation-cap text-4xl text-primary"></i>
                 </div>
                 <h1 class="text-2xl font-bold mb-2" data-i18n="app_title">Accademia del Successo</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-8" data-i18n="portal_desc">Portale Ufficiale di Accesso</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6" data-i18n="portal_desc">Portale Ufficiale di Accesso</p>
+                
                 <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
-                <div class="g_id_signin flex justify-center w-full" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
+                <div class="g_id_signin flex justify-center w-full mb-4" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
+
+                <!-- أزرار الدخول التجريبية رجعت تاني عشان تقدر تجرب -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <p class="text-xs text-gray-400 mb-3 uppercase tracking-wider">Accesso Demo</p>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="manualLogin('admin', 'المدير العام', 'admin@scuola.it')" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 font-bold py-3 rounded-xl btn-touch border border-red-100 dark:border-red-800"><i class="fas fa-shield-alt mr-2"></i> دخول كمدير (تجريبي)</button>
+                        <button onclick="manualLogin('teacher', 'أ. أحمد', 'teacher@scuola.it')" class="w-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 font-bold py-3 rounded-xl btn-touch border border-blue-100 dark:border-blue-800"><i class="fas fa-chalkboard-teacher mr-2"></i> دخول كمعلم (تجريبي)</button>
+                        <button onclick="manualLogin('student', 'الطالب محمد', 'student@scuola.it')" class="w-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-bold py-3 rounded-xl btn-touch border border-emerald-100 dark:border-emerald-800"><i class="fas fa-user-graduate mr-2"></i> دخول كطالب (تجريبي)</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ================= المنصة الرئيسية ================= -->
     <div id="screen-main" class="app-screen">
-        <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-sm">
+        <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="bg-primary text-white w-10 h-10 flex items-center justify-center rounded-full"><i class="fas fa-user"></i></div>
                 <div>
@@ -189,11 +173,10 @@
                 <div id="teacher-track-box" class="hidden"><div id="teacher-hw-list" class="space-y-4"></div></div>
             </div>
 
-            <!-- [3] الجدول التفاعلي -->
+            <!-- [3] الجدول -->
             <div id="view-schedule" class="app-view">
                 <div class="flex justify-between items-end mb-4">
                     <h2 class="text-xl font-bold flex items-center gap-2"><i class="far fa-calendar-alt text-emerald-500"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
-                    <!-- زر مسح الجدول -->
                     <button id="btn-clear-schedule" onclick="clearSchedule()" class="bg-red-100 dark:bg-red-900/30 text-red-500 px-3 py-1.5 rounded-lg text-sm font-bold btn-touch" style="display:none;"><i class="fas fa-trash"></i> <span data-i18n="clear_sch">Svuota</span></button>
                 </div>
                 <p id="schedule-hint" class="text-sm text-gray-500 mb-4" style="display:none;" data-i18n="click_to_edit">Tocca un riquadro per modificare la materia.</p>
@@ -215,8 +198,6 @@
     </div>
 
     <!-- ================= النوافذ المنبثقة ================= -->
-    
-    <!-- 1. نافذة التعديل السريع للمربع في الجدول -->
     <div id="modal-edit-cell" class="custom-modal">
         <div class="custom-modal-content !max-w-[400px]">
             <div class="flex justify-between items-center mb-4">
@@ -231,7 +212,6 @@
         </div>
     </div>
 
-    <!-- 2. نافذة تسليم الواجب -->
     <div id="modal-submit" class="custom-modal">
         <div class="custom-modal-content">
             <div class="sheet-handle"></div>
@@ -242,6 +222,7 @@
             <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl mb-4 text-primary font-bold text-sm" id="sheet-hw-title"></div>
             <label class="block font-bold text-sm mb-2" data-i18n="text_note">Testo / Note:</label>
             <textarea id="submit-text" class="custom-input mb-4 resize-none" rows="3"></textarea>
+            
             <label class="block font-bold text-sm mb-2" data-i18n="attach_file">Allega File:</label>
             <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center bg-gray-50 dark:bg-gray-800 mb-4 cursor-pointer">
                 <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)" accept=".pdf, image/*">
@@ -252,7 +233,6 @@
         </div>
     </div>
 
-    <!-- 3. نافذة إجابات الطلاب للمعلم -->
     <div id="modal-teacher" class="custom-modal">
         <div class="custom-modal-content flex flex-col h-[90vh]">
             <div class="sheet-handle"></div>
@@ -264,7 +244,6 @@
         </div>
     </div>
 
-    <!-- 4. نافذة عرض الصور / PDF -->
     <div id="modal-viewer" class="custom-modal z-[11000]">
         <div class="custom-modal-content flex flex-col h-[95vh] !p-4">
             <div class="flex justify-between items-center mb-4 shrink-0">
@@ -276,7 +255,7 @@
     </div>
 
     <script>
-        // ======================= إعدادات Firebase الخاصة بك =======================
+        // ======================= Firebase Configuration =======================
         const firebaseConfig = {
             apiKey: "AIzaSyBGOLQSvAEIKK380Zo2bpQtY6n0pSruFMg",
             authDomain: "profhebaacademyclasseroo-d1d49.firebaseapp.com",
@@ -289,7 +268,7 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
 
-        // ================= المتغيرات العامة وقواعد البيانات =================
+        // ================= Global Variables =================
         let homeworks = []; let scheduleData = {}; let allowedUsers = []; 
         let currentUser = null; let activeHwId = null; let activeCellKey = null;
         let currentLang = localStorage.getItem('appLang') || 'it';
@@ -304,7 +283,7 @@
                 btn_publish: "Pubblica", day_label: "Giorno", hour_label: "Ora", subj_class: "Materia e Classe", btn_save: "Salva", schedule_title: "Orario Lezioni",
                 current_schedule: "Orario Attuale", tab_assigned: "Attività", tab_schedule: "Orario", submit_task: "Svolgi Compito", submitted: "Consegnato", text_note: "Note:",
                 attach_file: "Allega File:", btn_send: "Invia", teacher_view_subs: "Elaborati Ricevuti", no_subs: "Nessuna consegna.", open_attachment: "Apri File",
-                no_tasks: "Nessuna attività.", file_viewer: "Visualizzatore", close: "Chiudi", tap_file: "Tocca per allegare", nav_admin: "Utenze", nav_hw: "Attività", nav_sch: "Orario", nav_home: "Home", clear_sch: "Svuota", click_to_edit: "Tocca un riquadro per modificare la materia."
+                no_tasks: "Nessuna attività.", file_viewer: "Visualizzatore", close: "Chiudi", tap_file: "Tocca per allegare", nav_admin: "Utenze", nav_hw: "Attività", nav_sch: "Orario", nav_home: "Home", clear_sch: "Svuota", click_to_edit: "Tocca un riquadro per modificare"
             },
             ar: {
                 app_title: "أكاديمية النجاح", portal_desc: "بوابة الدخول الرسمية", loading: "جاري التحميل...", confirm_msg: "هل أنت متأكد؟",
@@ -314,7 +293,7 @@
                 btn_publish: "نشر", day_label: "اليوم", hour_label: "الساعة", subj_class: "المادة والصف", btn_save: "حفظ", schedule_title: "الجدول",
                 current_schedule: "الجدول الحالي", tab_assigned: "الواجبات", tab_schedule: "الجدول", submit_task: "تسليم", submitted: "تم التسليم", text_note: "ملاحظات:",
                 attach_file: "إرفاق ملف:", btn_send: "إرسال", teacher_view_subs: "إجابات الطلاب", no_subs: "لا يوجد تسليمات.", open_attachment: "فتح الملف",
-                no_tasks: "لا توجد واجبات.", file_viewer: "عارض الملفات", close: "إغلاق", tap_file: "اضغط لإرفاق ملف", nav_admin: "الإدارة", nav_hw: "الواجبات", nav_sch: "الجدول", nav_home: "الرئيسية", clear_sch: "مسح", click_to_edit: "اضغط على المربع لتعديل المادة."
+                no_tasks: "لا توجد واجبات.", file_viewer: "عارض الملفات", close: "إغلاق", tap_file: "اضغط لإرفاق ملف", nav_admin: "الإدارة", nav_hw: "الواجبات", nav_sch: "الجدول", nav_home: "الرئيسية", clear_sch: "مسح", click_to_edit: "اضغط على المربع لتعديل المادة"
             }
         };
 
@@ -335,7 +314,7 @@
 
         function t(key) { return i18n[currentLang][key] || key; }
 
-        // ================= الإعدادات الأساسية =================
+        // ================= Initialization =================
         document.addEventListener('DOMContentLoaded', () => {
             applyTheme(isDarkMode); applyLanguage(currentLang);
         });
@@ -344,8 +323,7 @@
         function applyTheme(dark) {
             if (dark) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark');
             let ic = dark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon';
-            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`;
-            document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
+            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`; document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
         }
 
         window.toggleLang = function() { currentLang = currentLang === 'it' ? 'ar' : 'it'; localStorage.setItem('appLang', currentLang); applyLanguage(currentLang); }
@@ -374,7 +352,7 @@
             let gh = `<option value="">- ${t('class_label')} -</option>`; for (const [group, grades] of Object.entries(data.grades)) { gh += `<optgroup label="${group}">`; grades.forEach(g => gh += `<option value="${g}">${g}</option>`); gh += `</optgroup>`; } document.getElementById('hw-grade').innerHTML = gh;
         }
 
-        // ================= الإشعارات والنوافذ =================
+        // ================= Modals & Toasts =================
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             let icon = type === 'success' ? '<i class="fas fa-check-circle text-emerald-500 text-xl"></i>' : '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
@@ -385,18 +363,14 @@
         function hideLoader() { document.getElementById('loader-overlay').classList.add('hidden'); document.getElementById('loader-overlay').classList.remove('flex'); }
 
         let confirmCallback = null;
-        function showConfirm(msg, callback) {
-            document.getElementById('confirm-msg').innerText = msg;
-            document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex');
-            confirmCallback = callback;
-        }
-        function closeConfirmModal() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
-        document.getElementById('confirm-yes-btn').addEventListener('click', () => { closeConfirmModal(); if(confirmCallback) confirmCallback(); });
+        function showConfirm(msg, callback) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex'); confirmCallback = callback; }
+        window.closeConfirmModal = function() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
+        document.getElementById('confirm-btn-yes').addEventListener('click', () => { closeConfirmModal(); if(confirmCallback) confirmCallback(); });
 
         window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
         window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ================= تسجيل الدخول وقاعدة البيانات =================
+        // ================= Server Auth =================
         function parseJwt(token) { var base64Url = token.split('.')[1]; var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''))); }
 
         async function fetchServerData() {
@@ -405,7 +379,7 @@
                 const hSnap = await db.collection('homeworks').get(); homeworks = hSnap.docs.map(doc => doc.data());
                 const sDoc = await db.collection('settings').doc('schedule').get(); if (sDoc.exists) scheduleData = sDoc.data();
                 return true;
-            } catch (error) { showToast("Database Connection Error", "error"); return false; }
+            } catch (error) { showToast("Database Error", "error"); return false; }
         }
 
         window.handleGoogleLogin = async function(response) {
@@ -422,18 +396,21 @@
             if (user) loginAs(user.role, user.name || name, email); else showToast("Access Denied.", "error");
         }
 
-        function switchScreen(screenId) {
-            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-        function switchView(viewId) {
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+        // تسجيل دخول يدوي للتجربة (بدون حساب جوجل)
+        window.manualLogin = async function(role, name, email) {
+            showLoader(); let success = await fetchServerData(); hideLoader(); if(!success) return;
+            if (allowedUsers.length === 0) {
+                let newAdmin = { email, name, role: 'admin' }; allowedUsers.push(newAdmin);
+                await db.collection('users').doc(email).set(newAdmin); loginAs('admin', name, email); return;
+            }
+            loginAs(role, name, email);
         }
 
+        function switchScreen(screenId) { document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); }
+        function switchView(viewId) { document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
+
         function loginAs(role, name, email) {
-            currentUser = { role, name, email };
-            switchScreen('screen-main');
+            currentUser = { role, name, email }; switchScreen('screen-main');
             document.getElementById('user-name-display').innerText = name;
             document.getElementById('user-role-badge').innerText = role === 'admin' ? t('role_admin') : (role === 'teacher' ? t('role_teacher') : t('role_student'));
 
@@ -444,16 +421,13 @@
         }
         window.logout = function() { currentUser = null; switchScreen('screen-login'); }
 
-        // ================= شريط التنقل السفلي =================
+        // ================= Navigation =================
         function buildBottomNav() {
             const nav = document.getElementById('bottom-nav'); nav.innerHTML = '';
-            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
+            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer transition-colors" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
 
             if(currentUser.role === 'admin') nav.innerHTML += cItem('nav-admin', 'fa-shield-alt', t('nav_admin'), 'view-admin');
-            if(currentUser.role === 'admin' || currentUser.role === 'teacher') {
-                nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher');
-                nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule');
-            }
+            if(currentUser.role === 'admin' || currentUser.role === 'teacher') { nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher'); nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule'); }
             if(currentUser.role === 'student') nav.innerHTML += cItem('nav-student', 'fa-home', t('nav_home'), 'view-student');
         }
 
@@ -474,7 +448,7 @@
             window.scrollTo(0,0);
         }
 
-        // ================= الإدارة =================
+        // ================= Admin =================
         window.addUser = async function() {
             let name = document.getElementById('add-user-name').value; let email = document.getElementById('add-user-email').value.trim().toLowerCase(); let role = document.getElementById('add-user-role').value;
             if(!name || !email) return; let newUser = { email, name, role };
@@ -492,7 +466,7 @@
             }); document.getElementById('admin-users-list').innerHTML = html;
         }
 
-        // ================= المعلم =================
+        // ================= Teacher =================
         window.switchTeacherTab = function(tab) {
             let pBox = document.getElementById('teacher-publish-box'); let tBox = document.getElementById('teacher-track-box');
             let pTab = document.getElementById('tab-t-publish'); let tTab = document.getElementById('tab-t-track');
@@ -511,7 +485,7 @@
 
         function renderTeacherTracking() {
             let html = ''; let sortedHw = [...homeworks].sort((a, b) => b.timestamp - a.timestamp);
-            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400">${t('no_tasks')}</div>`; return; }
+            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400 font-bold">${t('no_tasks')}</div>`; return; }
             sortedHw.forEach(hw => {
                 let subCount = hw.submissions ? hw.submissions.length : 0;
                 let badge = subCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
@@ -535,15 +509,14 @@
         window.viewFileInModal = function(dataUrl, fileType) {
             const viewer = document.getElementById('file-viewer-container'); viewer.innerHTML = '';
             if(fileType.startsWith('image/')) viewer.innerHTML = `<img src="${dataUrl}" class="max-w-full max-h-full object-contain rounded-xl">`; 
-            else viewer.innerHTML = `<iframe src="${dataUrl}" class="w-full h-full rounded-xl bg-white"></iframe>`; 
+            else if (fileType === 'application/pdf') viewer.innerHTML = `<iframe src="${dataUrl}" class="w-full h-full rounded-xl bg-white"></iframe>`; 
             openModal('modal-viewer');
         }
 
-        // ================= الجدول (التفاعل الذكي) =================
+        // ================= Schedule =================
         window.openEditCellModal = function(dayIdx, slotIdx) {
             activeCellKey = `${dayIdx}-${slotIdx}`;
-            let dayName = schoolData[currentLang].days[dayIdx];
-            let slotName = schoolData[currentLang].slots[slotIdx];
+            let dayName = schoolData[currentLang].days[dayIdx]; let slotName = schoolData[currentLang].slots[slotIdx];
             document.getElementById('edit-cell-title').innerText = `${dayName} - ${slotName}`;
             document.getElementById('edit-cell-input').value = scheduleData[activeCellKey] || '';
             openModal('modal-edit-cell');
@@ -576,7 +549,6 @@
                     let cellClass = sub ? 'filled-cell' : '';
                     let action = isEditable ? `onclick="openEditCellModal(${dayIdx}, ${slotIdx})" class="schedule-cell ${cellClass} clickable"` : `class="schedule-cell ${cellClass}"`;
                     let content = sub ? sub : (isEditable ? '<i class="fas fa-plus text-gray-300 dark:text-gray-600"></i>' : '-');
-                    
                     html += `<td ${action}><div class="line-clamp-2">${content}</div></td>`;
                 });
                 html += `</tr>`;
@@ -585,7 +557,7 @@
             const container = document.getElementById(containerId); if(container) container.innerHTML = html;
         }
 
-        // ================= الطالب =================
+        // ================= Student =================
         window.switchStudentTab = function(tab) {
             let hwBox = document.getElementById('student-hw-box'); let schBox = document.getElementById('student-schedule-box');
             let hwTab = document.getElementById('tab-s-hw'); let schTab = document.getElementById('tab-s-sch');
@@ -637,7 +609,6 @@
             if (file) { let reader = new FileReader(); reader.onload = function(e) { saveToDb(e.target.result, file.type, file.name); }; reader.readAsDataURL(file); } else { saveToDb(); }
         }
 
-        // منع النوافذ من الإغلاق عند النقر بداخلها، وإغلاقها عند النقر في الخارج
         document.querySelectorAll('.custom-modal').forEach(modal => {
             modal.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
         });
