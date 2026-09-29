@@ -1,161 +1,339 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="it" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أكاديمية النجاح - المنصة التعليمية</title>
+    <title>Accademia del Successo - Piattaforma Educativa</title>
     
-    <!-- مكتبات التصميم -->
+    <!-- Librerie di stile e Google -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبات سيرفر Firebase -->
+    <!-- Librerie Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
-    <!-- ستايل الموقع المدمج -->
+    <!-- Stile Integrato -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
-        :root { --primary: #4f46e5; --primary-dark: #4338ca; --secondary: #10b981; --bg-color: #f3f4f6; --surface: #ffffff; --text-main: #1f2937; --text-muted: #6b7280; }
-        * { -webkit-tap-highlight-color: transparent; font-family: 'Tajawal', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --secondary: #10b981; --bg-color: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-muted: #64748b; }
+        * { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; padding-bottom: 80px; }
         .hidden-section { display: none !important; }
         .btn-touch { transition: transform 0.1s ease, box-shadow 0.1s ease; }
         .btn-touch:active { transform: scale(0.97); }
 
-        .mobile-card { background: var(--surface); border-radius: 16px; padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 1rem; border: 1px solid #e5e7eb; }
-        .mobile-input { width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid #d1d5db; background-color: #f9fafb; font-size: 1rem; margin-top: 0.5rem; transition: border-color 0.2s; }
-        .mobile-input:focus { outline: none; border-color: var(--primary); background-color: var(--surface); }
+        .mobile-card { background: var(--surface); border-radius: 16px; padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 1rem; border: 1px solid #e2e8f0; }
+        .mobile-input { width: 100%; padding: 0.875rem 1rem; border-radius: 12px; border: 1px solid #cbd5e1; background-color: #f8fafc; font-size: 1rem; margin-top: 0.5rem; transition: border-color 0.2s; }
+        .mobile-input:focus { outline: none; border-color: var(--primary); background-color: var(--surface); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); box-shadow: 0 -4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-around; padding: 0.75rem 0.5rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); z-index: 50; border-top-left-radius: 20px; border-top-right-radius: 20px; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; width: 25%; transition: color 0.2s; }
-        .nav-item i { font-size: 1.5rem; margin-bottom: 0.25rem; padding: 0.5rem; border-radius: 50%; }
+        .nav-item i { font-size: 1.25rem; margin-bottom: 0.25rem; padding: 0.5rem; border-radius: 50%; }
         .nav-item.active { color: var(--primary); }
-        .nav-item.active i { background-color: #e0e7ff; color: var(--primary-dark); }
+        .nav-item.active i { background-color: #eff6ff; color: var(--primary-dark); }
 
-        .schedule-wrapper { overflow-x: auto; border-radius: 12px; background: white; -webkit-overflow-scrolling: touch; }
+        .schedule-wrapper { overflow-x: auto; border-radius: 12px; background: white; -webkit-overflow-scrolling: touch; border: 1px solid #e2e8f0;}
         .schedule-table { width: 100%; min-width: 600px; border-collapse: collapse; }
-        .schedule-table th, .schedule-table td { border: 1px solid #f3f4f6; padding: 1rem 0.5rem; text-align: center; }
-        .schedule-table th { background-color: #f9fafb; font-weight: 700; color: var(--text-muted); }
+        .schedule-table th, .schedule-table td { border: 1px solid #f1f5f9; padding: 0.875rem 0.5rem; text-align: center; }
+        .schedule-table th { background-color: #f8fafc; font-weight: 600; color: var(--text-muted); font-size: 0.875rem;}
         .schedule-cell { font-size: 0.875rem; font-weight: 500; }
-        .schedule-cell.filled { background-color: #e0e7ff; color: var(--primary-dark); font-weight: 700; }
+        .schedule-cell.filled { background-color: #eff6ff; color: var(--primary-dark); font-weight: 600; }
         
-        .bottom-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .bottom-sheet-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 100; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(2px);}
         .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
-        .bottom-sheet-content { background: #f8fafc; width: 100%; max-height: 90vh; overflow-y: auto; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 2rem 1.5rem; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
+        .bottom-sheet-content { background: #ffffff; width: 100%; max-height: 90vh; overflow-y: auto; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 2rem 1.5rem; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); box-shadow: 0 -10px 40px rgba(0,0,0,0.1);}
         .bottom-sheet-overlay.active .bottom-sheet-content { transform: translateY(0); }
         .sheet-handle { width: 40px; height: 5px; background: #cbd5e1; border-radius: 10px; margin: -1rem auto 1.5rem auto; }
 
-        .app-header { background: var(--primary); color: white; padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top)); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2); position: sticky; top: 0; z-index: 40; }
+        .app-header { background: var(--surface); color: var(--text-main); padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top)); border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 40; }
 
-        .login-bg { background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; }
-        .login-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 24px; padding: 2.5rem 1.5rem; width: 100%; max-width: 400px; text-align: center; }
+        .login-bg { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; }
+        .login-card { background: rgba(255, 255, 255, 0.95); border-radius: 24px; padding: 2.5rem 2rem; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255,255,255,0.5);}
 
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none; }
-        .custom-toast { background: white; border-radius: 12px; padding: 12px 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.4s ease 3s forwards; pointer-events: auto; border: 1px solid #e5e7eb; }
-        .custom-toast.success { border-right: 5px solid #10b981; } .custom-toast.error { border-right: 5px solid #ef4444; } .custom-toast.info { border-right: 5px solid #3b82f6; }
+        #toast-container { position: fixed; top: calc(20px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none; }
+        .custom-toast { background: white; border-radius: 12px; padding: 12px 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.4s ease 3s forwards; pointer-events: auto; border: 1px solid #e2e8f0; border-left: 4px solid var(--primary);}
+        .custom-toast.success { border-left-color: #10b981; } .custom-toast.error { border-left-color: #ef4444; } .custom-toast.info { border-left-color: #3b82f6; }
         @keyframes slideDown { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } } @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; display: none; } }
 
-        #confirm-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        #confirm-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(2px);}
         #confirm-modal.active { opacity: 1; pointer-events: auto; }
-        .confirm-box { background: white; padding: 24px; border-radius: 20px; width: 90%; max-width: 350px; transform: scale(0.9); transition: transform 0.2s; text-align: center; }
+        .confirm-box { background: white; padding: 2rem; border-radius: 20px; width: 90%; max-width: 380px; transform: scale(0.95); transition: transform 0.2s; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);}
         #confirm-modal.active .confirm-box { transform: scale(1); }
         
-        #loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
+        #loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; backdrop-filter: blur(5px);}
+        
+        .mr-auto { margin-right: auto; }
+        .ml-auto { margin-left: auto; }
+        .text-left { text-align: left; }
     </style>
 </head>
 <body>
 
     <div id="toast-container"></div>
-    <div id="loader-overlay" class="hidden-section"><i class="fas fa-circle-notch fa-spin text-5xl text-indigo-600 mb-4"></i><h2 class="text-xl font-bold text-gray-800">جاري الاتصال...</h2></div>
+    <div id="loader-overlay" class="hidden-section">
+        <i class="fas fa-circle-notch fa-spin text-4xl text-blue-600 mb-4"></i>
+        <h2 class="text-lg font-semibold text-slate-800">Caricamento in corso...</h2>
+    </div>
 
-    <div id="confirm-modal"><div class="confirm-box shadow-2xl"><div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-exclamation-triangle text-3xl text-red-500"></i></div><h3 id="confirm-msg" class="font-bold text-gray-800 text-lg mb-6">هل أنت متأكد؟</h3><div class="flex gap-3"><button onclick="closeConfirmModal()" class="flex-1 bg-gray-100 text-gray-700 font-bold py-3 rounded-xl btn-touch">إلغاء</button><button id="confirm-btn-yes" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-xl btn-touch shadow-lg">نعم</button></div></div></div>
-
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="login-bg hidden-section">
-        <div class="login-card">
-            <div class="bg-indigo-100 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 shadow-sm"><i class="fas fa-graduation-cap text-5xl text-indigo-600"></i></div>
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">أكاديمية النجاح</h1>
-            <p class="text-gray-500 mb-8 text-sm">متصل بالسيرفر السحابي</p>
-            <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
-            <div class="g_id_signin flex justify-center mb-6" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="pill"></div>
+    <div id="confirm-modal">
+        <div class="confirm-box">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-circle text-3xl text-red-500"></i>
+            </div>
+            <h3 id="confirm-msg" class="font-semibold text-slate-800 text-lg mb-6">Sei sicuro?</h3>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 text-slate-700 font-medium py-2.5 rounded-xl btn-touch hover:bg-slate-200">Annulla</button>
+                <button id="confirm-btn-yes" class="flex-1 bg-red-600 text-white font-medium py-2.5 rounded-xl btn-touch hover:bg-red-700">Conferma</button>
+            </div>
         </div>
     </div>
 
-    <!-- المنصة الرئيسية -->
+    <!-- Schermata di Login -->
+    <div id="login-screen" class="login-bg hidden-section">
+        <div class="login-card">
+            <div class="bg-blue-50 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-graduation-cap text-4xl text-blue-600"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">Accademia del Successo</h1>
+            <p class="text-slate-500 mb-8 text-sm">Portale Ufficiale di Accesso</p>
+            
+            <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
+            <div class="g_id_signin flex justify-center mb-6" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
+            
+            <div class="relative flex py-4 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium uppercase tracking-wider">Accesso Demo</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+            
+            <div class="flex flex-col gap-3 mt-2">
+                <button onclick="manualLogin('admin', 'Amministratore', 'admin@scuola.it')" class="btn-touch w-full bg-slate-50 text-slate-700 font-medium py-3 rounded-xl border border-slate-200 flex justify-center items-center gap-2 hover:bg-slate-100"><i class="fas fa-shield-alt text-slate-500"></i> Area Amministrazione</button>
+                <button onclick="manualLogin('teacher', 'Prof. Rossi', 'docente@scuola.it')" class="btn-touch w-full bg-blue-50 text-blue-700 font-medium py-3 rounded-xl border border-blue-200 flex justify-center items-center gap-2 hover:bg-blue-100"><i class="fas fa-chalkboard-teacher text-blue-500"></i> Area Docenti</button>
+                <button onclick="manualLogin('student', 'Studente Mario', 'studente@scuola.it')" class="btn-touch w-full bg-emerald-50 text-emerald-700 font-medium py-3 rounded-xl border border-emerald-200 flex justify-center items-center gap-2 hover:bg-emerald-100"><i class="fas fa-user-graduate text-emerald-500"></i> Area Studenti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Piattaforma Principale -->
     <div id="main-dashboard" class="hidden-section">
         <header class="app-header flex justify-between items-center">
-            <div class="flex items-center gap-3"><div class="bg-white/20 p-2 rounded-full backdrop-blur-sm"><i class="fas fa-user text-xl"></i></div><div><h2 id="user-name-display" class="font-bold text-sm leading-tight">اسم المستخدم</h2><span id="user-role-badge" class="text-xs text-indigo-200">الدور</span></div></div>
-            <button onclick="logout()" class="p-2 bg-white/10 rounded-full hover:bg-red-500/80 transition btn-touch"><i class="fas fa-sign-out-alt text-xl"></i></button>
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-100 p-2.5 rounded-full text-blue-600"><i class="fas fa-user"></i></div>
+                <div class="text-left">
+                    <h2 id="user-name-display" class="font-bold text-sm text-slate-800 leading-tight">Nome Utente</h2>
+                    <span id="user-role-badge" class="text-xs text-slate-500 font-medium">Ruolo</span>
+                </div>
+            </div>
+            <button onclick="logout()" class="p-2.5 text-slate-400 hover:text-red-600 transition btn-touch rounded-full hover:bg-slate-100"><i class="fas fa-sign-out-alt text-lg"></i></button>
         </header>
 
-        <main class="p-4" id="content-area">
+        <main class="p-4 md:p-6 lg:max-w-4xl lg:mx-auto" id="content-area">
             
-            <!-- [1] الإدارة -->
+            <!-- [1] Area Amministrazione -->
             <div id="view-admin" class="hidden-section pb-20">
-                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-server text-red-500"></i> إدارة السيرفر</h2>
-                <div class="mobile-card border-t-4 border-t-red-500">
-                    <h3 class="font-bold mb-4">إضافة مستخدم للسيرفر</h3>
-                    <div><label class="text-sm font-bold text-gray-600 ml-1">الاسم</label><input type="text" id="add-user-name" class="mobile-input"></div>
-                    <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">الإيميل</label><input type="email" id="add-user-email" class="mobile-input text-left" dir="ltr"></div>
-                    <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">الصلاحية</label><select id="add-user-role" class="mobile-input bg-white"><option value="student">طالب</option><option value="teacher">معلم</option><option value="admin">مدير</option></select></div>
-                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-red-600 text-white font-bold py-3 rounded-xl shadow-md"><i class="fas fa-cloud-upload-alt ml-1"></i> حفظ</button>
+                <h2 class="text-xl font-bold mb-5 text-slate-800 flex items-center gap-2"><i class="fas fa-users-cog text-blue-600"></i> Gestione Utenze</h2>
+                <div class="mobile-card border-t-4 border-t-blue-500">
+                    <h3 class="font-semibold text-slate-800 mb-4">Nuovo Utente</h3>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Nome e Cognome</label>
+                        <input type="text" id="add-user-name" class="mobile-input" placeholder="Es. Giulia Bianchi">
+                    </div>
+                    <div class="mt-4">
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Indirizzo Email</label>
+                        <input type="email" id="add-user-email" class="mobile-input" placeholder="email@scuola.it">
+                    </div>
+                    <div class="mt-4">
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Ruolo</label>
+                        <select id="add-user-role" class="mobile-input bg-white appearance-none">
+                            <option value="student">Studente</option>
+                            <option value="teacher">Docente</option>
+                            <option value="admin">Amministratore</option>
+                        </select>
+                    </div>
+                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-blue-600 text-white font-medium py-3 rounded-xl shadow-sm hover:bg-blue-700">Registra Utente</button>
                 </div>
-                <h3 class="font-bold mt-6 mb-3 ml-2 text-gray-700">المسجلون بالسيرفر</h3>
+                
+                <h3 class="font-semibold mt-8 mb-4 ml-1 text-slate-800">Utenti Registrati</h3>
                 <div id="admin-users-list" class="space-y-3"></div>
             </div>
 
-            <!-- [2] الواجبات -->
+            <!-- [2] Area Docenti - Compiti -->
             <div id="view-homework-manage" class="hidden-section pb-20">
-                <div class="flex bg-gray-200 p-1 rounded-xl mb-6"><button onclick="switchTeacherTab('publish')" id="tab-t-publish" class="flex-1 py-2 font-bold rounded-lg text-sm bg-white text-indigo-600">نشر واجب</button><button onclick="switchTeacherTab('track')" id="tab-t-track" class="flex-1 py-2 font-bold rounded-lg text-sm text-gray-500">التسليمات</button></div>
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                    <button onclick="switchTeacherTab('publish')" id="tab-t-publish" class="flex-1 py-2 font-medium rounded-lg text-sm bg-white text-blue-600 shadow-sm transition-all">Assegna Compito</button>
+                    <button onclick="switchTeacherTab('track')" id="tab-t-track" class="flex-1 py-2 font-medium rounded-lg text-sm text-slate-500 transition-all">Consegne</button>
+                </div>
+
                 <div id="teacher-publish-view">
                     <div class="mobile-card border-t-4 border-t-indigo-500">
-                        <div><label class="text-sm font-bold text-gray-600 ml-1">عنوان الواجب</label><input type="text" id="hw-title" class="mobile-input"></div>
-                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">آخر موعد</label><input type="date" id="hw-date" class="mobile-input"></div>
-                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">الصف</label><select id="hw-grade" class="mobile-input bg-white"><option value="">- حدد الصف -</option><optgroup label="الابتدائي"><option value="الأول الابتدائي">الأول الابتدائي</option><option value="الثاني الابتدائي">الثاني الابتدائي</option><option value="السادس الابتدائي">السادس الابتدائي</option></optgroup><optgroup label="الإعدادي"><option value="الأول الإعدادي">الأول الإعدادي</option><option value="الثالث الإعدادي">الثالث الإعدادي</option></optgroup><optgroup label="الثانوي"><option value="الأول الثانوي">الأول الثانوي</option><option value="الثالث الثانوي">الثالث الثانوي</option></optgroup></select></div>
-                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">المادة</label><select id="hw-subject" class="mobile-input bg-white"><option value="">- حدد المادة -</option><option value="اللغة العربية">اللغة العربية</option><option value="الرياضيات">الرياضيات</option><option value="الفيزياء">الفيزياء</option><option value="أخرى">أخرى</option></select></div>
-                        <div class="mt-4"><label class="text-sm font-bold text-gray-600 ml-1">التعليمات</label><textarea id="hw-desc" rows="3" class="mobile-input resize-none"></textarea></div>
-                        <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md"><i class="fas fa-paper-plane"></i> نشر</button>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Titolo dell'Attività</label>
+                            <input type="text" id="hw-title" class="mobile-input" placeholder="Es. Esercizi sulle equazioni">
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Data di Scadenza</label>
+                            <input type="date" id="hw-date" class="mobile-input">
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Classe</label>
+                            <select id="hw-grade" class="mobile-input bg-white">
+                                <option value="">- Seleziona Classe -</option>
+                                <optgroup label="Scuola Primaria">
+                                    <option value="1ª Primaria">1ª Primaria</option><option value="2ª Primaria">2ª Primaria</option>
+                                    <option value="3ª Primaria">3ª Primaria</option><option value="4ª Primaria">4ª Primaria</option><option value="5ª Primaria">5ª Primaria</option>
+                                </optgroup>
+                                <optgroup label="Scuola Secondaria di I Grado (Medie)">
+                                    <option value="1ª Media">1ª Media</option><option value="2ª Media">2ª Media</option><option value="3ª Media">3ª Media</option>
+                                </optgroup>
+                                <optgroup label="Scuola Secondaria di II Grado (Superiori)">
+                                    <option value="1ª Superiore">1ª Superiore</option><option value="2ª Superiore">2ª Superiore</option>
+                                    <option value="3ª Superiore">3ª Superiore</option><option value="4ª Superiore">4ª Superiore</option><option value="5ª Superiore">5ª Superiore</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Materia</label>
+                            <select id="hw-subject" class="mobile-input bg-white">
+                                <option value="">- Seleziona Materia -</option>
+                                <option value="Italiano">Italiano</option>
+                                <option value="Matematica">Matematica</option>
+                                <option value="Storia">Storia</option>
+                                <option value="Geografia">Geografia</option>
+                                <option value="Inglese">Inglese</option>
+                                <option value="Scienze">Scienze</option>
+                                <option value="Arte e Immagine">Arte e Immagine</option>
+                                <option value="Tecnologia">Tecnologia</option>
+                                <option value="Musica">Musica</option>
+                                <option value="Educazione Fisica">Educazione Fisica</option>
+                                <option value="Religione/Alternativa">Religione/Alternativa</option>
+                                <option value="Fisica">Fisica</option>
+                                <option value="Chimica">Chimica</option>
+                                <option value="Latino">Latino</option>
+                                <option value="Greco">Greco</option>
+                                <option value="Filosofia">Filosofia</option>
+                                <option value="Storia dell'Arte">Storia dell'Arte</option>
+                                <option value="Informatica">Informatica</option>
+                                <option value="Altro">Altro</option>
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Istruzioni</label>
+                            <textarea id="hw-desc" rows="3" class="mobile-input resize-none" placeholder="Descrivi il compito da svolgere..."></textarea>
+                        </div>
+                        <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 text-white font-medium py-3 rounded-xl shadow-sm hover:bg-indigo-700">Pubblica Attività</button>
                     </div>
                 </div>
                 <div id="teacher-track-view" class="hidden-section"><div id="teacher-hw-list" class="space-y-4"></div></div>
             </div>
 
-            <!-- [3] الجدول -->
+            <!-- [3] Orario Lezioni -->
             <div id="view-schedule-manage" class="hidden-section pb-20">
-                <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-calendar-alt text-purple-500"></i> تنظيم الجدول</h2>
-                <div class="mobile-card border-t-4 border-t-purple-500 mb-6 bg-purple-50">
+                <h2 class="text-xl font-bold mb-5 text-slate-800 flex items-center gap-2"><i class="far fa-calendar-alt text-emerald-500"></i> Orario delle Lezioni</h2>
+                
+                <div id="schedule-controls" class="mobile-card border-t-4 border-t-emerald-500 mb-6 bg-emerald-50/50">
                     <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-xs font-bold text-gray-600">اليوم</label><select id="sch-day" class="mobile-input py-2 mt-1 bg-white"><option value="السبت">السبت</option><option value="الأحد">الأحد</option><option value="الإثنين">الإثنين</option><option value="الثلاثاء">الثلاثاء</option><option value="الأربعاء">الأربعاء</option><option value="الخميس">الخميس</option></select></div>
-                        <div><label class="text-xs font-bold text-gray-600">الحصة</label><select id="sch-slot" class="mobile-input py-2 mt-1 bg-white"><option value="1">الأولى</option><option value="2">الثانية</option><option value="3">الثالثة</option><option value="4">الرابعة</option><option value="5">الخامسة</option></select></div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500 uppercase">Giorno</label>
+                            <select id="sch-day" class="mobile-input py-2 mt-1 bg-white">
+                                <option value="Lunedì">Lunedì</option><option value="Martedì">Martedì</option><option value="Mercoledì">Mercoledì</option>
+                                <option value="Giovedì">Giovedì</option><option value="Venerdì">Venerdì</option><option value="Sabato">Sabato</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500 uppercase">Ora</label>
+                            <select id="sch-slot" class="mobile-input py-2 mt-1 bg-white">
+                                <option value="1">1ª Ora</option><option value="2">2ª Ora</option><option value="3">3ª Ora</option>
+                                <option value="4">4ª Ora</option><option value="5">5ª Ora</option><option value="6">6ª Ora</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mt-3"><label class="text-xs font-bold text-gray-600">المادة والصف</label><input type="text" id="sch-subject" class="mobile-input py-2 mt-1 bg-white"></div>
+                    <div class="mt-3">
+                        <label class="text-xs font-semibold text-slate-500 uppercase">Materia e Classe</label>
+                        <input type="text" id="sch-subject" class="mobile-input py-2 mt-1 bg-white" placeholder="Es. Matematica (3ªA)">
+                    </div>
                     <div class="flex gap-2 mt-4">
-                        <button onclick="addScheduleSlot()" class="btn-touch flex-grow bg-purple-600 text-white font-bold py-2 rounded-xl"><i class="fas fa-save ml-1"></i> حفظ</button>
-                        <button onclick="clearSchedule()" class="btn-touch w-12 bg-red-100 text-red-600 font-bold rounded-xl"><i class="fas fa-trash"></i></button>
+                        <button onclick="addScheduleSlot()" class="btn-touch flex-grow bg-emerald-600 text-white font-medium py-2 rounded-xl hover:bg-emerald-700">Salva Modifica</button>
+                        <button onclick="clearSchedule()" class="btn-touch w-12 bg-white text-red-500 border border-red-200 font-medium rounded-xl hover:bg-red-50"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
+                
+                <h3 class="font-semibold mb-3 ml-1 text-slate-800">Orario Attuale <span class="text-xs text-slate-500 font-normal">(Scorri orizzontalmente)</span></h3>
                 <div id="manage-schedule-container"></div>
             </div>
 
-            <!-- [4] الطالب -->
+            <!-- [4] Area Studenti -->
             <div id="view-student" class="hidden-section pb-20">
-                <div class="flex bg-gray-200 p-1 rounded-xl mb-6"><button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2 font-bold rounded-lg text-sm bg-white text-indigo-600">الواجبات</button><button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2 font-bold rounded-lg text-sm text-gray-500">الجدول</button></div>
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                    <button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2 font-medium rounded-lg text-sm bg-white text-blue-600 shadow-sm transition-all">Attività Assegnate</button>
+                    <button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2 font-medium rounded-lg text-sm text-slate-500 transition-all">Orario Lezioni</button>
+                </div>
                 <div id="student-hw-list" class="space-y-4"></div>
                 <div id="student-schedule-view" class="hidden-section"><div id="display-schedule-container"></div></div>
             </div>
         </main>
+        
         <nav id="bottom-nav" class="bottom-nav"></nav>
     </div>
 
-    <!-- النوافذ المنبثقة -->
-    <div id="submit-sheet" class="bottom-sheet-overlay"><div class="bottom-sheet-content"><div class="sheet-handle"></div><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-gray-800">تسليم الواجب</h3><button onclick="closeSheet('submit-sheet')" class="p-2 bg-gray-100 rounded-full btn-touch"><i class="fas fa-times"></i></button></div><div class="space-y-5"><div class="bg-indigo-50 border p-3 rounded-lg"><p id="sheet-hw-title" class="font-bold text-indigo-900 text-sm"></p></div><div><label class="block font-bold text-sm text-gray-600 mb-2">إجابة نصية:</label><textarea id="submit-text" class="mobile-input resize-none" rows="3"></textarea></div><div><label class="block font-bold text-sm text-gray-600 mb-2">إرفاق ملف:</label><div class="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition"><input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)" accept=".pdf, image/png, image/jpeg"><i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i><p id="file-name-display" class="text-sm font-bold text-indigo-600">اختر ملف</p></div></div><button id="confirm-submit-btn" onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 text-white font-bold py-4 rounded-xl mt-4">تأكيد الرفع</button></div></div></div>
-    <div id="teacher-view-sheet" class="bottom-sheet-overlay"><div class="bottom-sheet-content" style="max-height: 95vh;"><div class="sheet-handle"></div><div class="flex justify-between items-center mb-4 border-b pb-3"><h3 class="text-xl font-bold text-indigo-800">التسليمات</h3><button onclick="closeSheet('teacher-view-sheet')" class="p-2 bg-gray-100 rounded-full btn-touch"><i class="fas fa-times"></i></button></div><div id="submissions-container" class="space-y-3"></div></div></div>
-    <div id="file-viewer-modal" class="bottom-sheet-overlay" style="z-index: 2000;"><div class="bottom-sheet-content" style="height: 90vh; display: flex; flex-direction: column; padding: 1rem;"><div class="sheet-handle"></div><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-gray-800">معاينة الملف</h3><button onclick="closeSheet('file-viewer-modal')" class="p-2 bg-gray-100 rounded-full text-red-500 btn-touch"><i class="fas fa-times"></i> إغلاق</button></div><div id="file-viewer-container" class="flex-grow w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center p-2"></div></div></div>
+    <!-- Modali (Bottom Sheets) -->
+    
+    <!-- Consegna Studente -->
+    <div id="submit-sheet" class="bottom-sheet-overlay">
+        <div class="bottom-sheet-content">
+            <div class="sheet-handle"></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-slate-800">Consegna Elaborato</h3>
+                <button onclick="closeSheet('submit-sheet')" class="p-2 bg-slate-100 rounded-full text-slate-500 btn-touch w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-5">
+                <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
+                    <p id="sheet-hw-title" class="font-medium text-blue-900 text-sm"></p>
+                </div>
+                <div>
+                    <label class="block font-medium text-sm text-slate-700 mb-2">Testo / Note per il docente:</label>
+                    <textarea id="submit-text" class="mobile-input resize-none" rows="4" placeholder="Scrivi qui la tua risposta o eventuali annotazioni..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium text-sm text-slate-700 mb-2 flex justify-between items-end">
+                        Allega File: <span class="text-xs text-slate-500 font-normal">Max 1MB</span>
+                    </label>
+                    <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-5 text-center bg-slate-50 hover:bg-slate-100 transition cursor-pointer">
+                        <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)" accept=".pdf, image/png, image/jpeg">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2"></i>
+                        <p id="file-name-display" class="text-sm font-medium text-blue-600">Tocca per selezionare un file</p>
+                    </div>
+                </div>
+                <button id="confirm-submit-btn" onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 text-white font-medium py-3.5 rounded-xl mt-2 shadow-sm hover:bg-emerald-700">Invia Consegna</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- استدعاء ملف الأكواد الخارجي هنا -->
+    <!-- Visualizzazione Consegne Docente -->
+    <div id="teacher-view-sheet" class="bottom-sheet-overlay">
+        <div class="bottom-sheet-content" style="max-height: 95vh; display: flex; flex-direction: column;">
+            <div class="sheet-handle"></div>
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3 shrink-0">
+                <h3 class="text-lg font-bold text-slate-800">Elaborati Ricevuti</h3>
+                <button onclick="closeSheet('teacher-view-sheet')" class="p-2 bg-slate-100 rounded-full text-slate-500 btn-touch w-8 h-8 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="submissions-container" class="space-y-3 overflow-y-auto flex-grow pb-10"></div>
+        </div>
+    </div>
+
+    <!-- Visualizzatore File -->
+    <div id="file-viewer-modal" class="bottom-sheet-overlay" style="z-index: 2000;">
+        <div class="bottom-sheet-content" style="height: 95vh; display: flex; flex-direction: column; padding: 1.5rem 1rem;">
+            <div class="sheet-handle"></div>
+            <div class="flex justify-between items-center mb-4 shrink-0">
+                <h3 class="font-bold text-slate-800 truncate pr-2">Visualizzatore</h3>
+                <button onclick="closeSheet('file-viewer-modal')" class="px-3 py-1.5 bg-slate-100 rounded-lg text-slate-600 text-sm font-medium btn-touch hover:bg-slate-200">Chiudi</button>
+            </div>
+            <div id="file-viewer-container" class="flex-grow w-full bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center"></div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
-
 </body>
 </html>
