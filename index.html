@@ -5,10 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Accademia del Successo</title>
     
-    <!-- مكتبات التصميم وجوجل -->
+    <!-- مكتبات التصميم -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- تفعيل الوضع الداكن في Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- مكتبات سيرفر Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -17,100 +31,96 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
         
-        /* المتغيرات الأساسية للمظهر الفاتح والداكن */
-        :root { 
-            --primary: #2563eb; --primary-dark: #1d4ed8; --secondary: #10b981; 
-            --bg-color: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-muted: #64748b; 
-            --border-color: #e2e8f0; --input-bg: #f8fafc; --nav-active-bg: #eff6ff;
-            --font-en: 'Inter', sans-serif; --font-ar: 'Tajawal', sans-serif;
-        }
-        
-        body.dark-mode {
-            --bg-color: #0f172a; --surface: #1e293b; --text-main: #f1f5f9; --text-muted: #94a3b8; 
-            --border-color: #334155; --input-bg: #0f172a; --nav-active-bg: #334155;
-        }
-
         * { -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background-color: var(--bg-color); color: var(--text-main); 
-            overflow-x: hidden; padding-bottom: 80px; transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden; 
+            padding-bottom: 85px; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
-        /* الخطوط تتغير حسب اللغة */
-        body[dir="ltr"] { font-family: var(--font-en); }
-        body[dir="rtl"] { font-family: var(--font-ar); }
 
         .hidden-section { display: none !important; }
-        .btn-touch { transition: transform 0.1s ease; }
+        .btn-touch { transition: all 0.15s ease; }
         .btn-touch:active { transform: scale(0.96); }
 
-        /* العناصر الأساسية متجاوبة مع الوضع الداكن */
-        .mobile-card { background: var(--surface); border-radius: 16px; padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 1rem; border: 1px solid var(--border-color); transition: all 0.3s;}
-        .mobile-input { width: 100%; padding: 0.875rem 1rem; border-radius: 12px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); font-size: 1rem; margin-top: 0.5rem; transition: border-color 0.2s; }
-        .mobile-input:focus { outline: none; border-color: var(--primary); }
+        /* حقول الإدخال */
+        .mobile-input {
+            @apply w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white text-base mt-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all;
+        }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 0.75rem 0.5rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); z-index: 50; transition: all 0.3s;}
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 600; width: 25%; transition: color 0.2s; cursor: pointer;}
-        .nav-item i { font-size: 1.25rem; margin-bottom: 0.25rem; padding: 0.5rem; border-radius: 50%; transition: background-color 0.2s;}
-        .nav-item.active { color: var(--primary); }
-        .nav-item.active i { background-color: var(--nav-active-bg); color: var(--primary); }
+        /* الجداول المحسنة */
+        .schedule-wrapper { @apply overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm; -webkit-overflow-scrolling: touch; }
+        .schedule-table { @apply w-full min-w-[600px] border-collapse text-sm; }
+        .schedule-table th, .schedule-table td { @apply border border-slate-100 dark:border-slate-700/50 p-3 text-center text-slate-700 dark:text-slate-300; }
+        .schedule-table th { @apply bg-slate-50 dark:bg-slate-900/50 font-semibold text-slate-500 dark:text-slate-400; }
 
-        .app-header { background: var(--surface); color: var(--text-main); padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top)); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 40; transition: all 0.3s;}
+        /* النوافذ السفلية (Bottom Sheets) */
+        .bottom-sheet-overlay { @apply fixed inset-0 bg-slate-900/40 dark:bg-black/60 z-[100] flex items-end opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-sm; }
+        .bottom-sheet-overlay.active { @apply opacity-100 pointer-events-auto; }
+        .bottom-sheet-content { @apply bg-white dark:bg-slate-800 w-full max-h-[90vh] overflow-y-auto rounded-t-3xl p-6 sm:p-8 transform translate-y-full transition-transform duration-300 ease-out shadow-[0_-10px_40px_rgba(0,0,0,0.1)]; }
+        .bottom-sheet-overlay.active .bottom-sheet-content { @apply translate-y-0; }
+        .sheet-handle { @apply w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto -mt-2 mb-6; }
+
+        /* التنبيهات */
+        #toast-container { @apply fixed top-5 left-1/2 -translate-x-1/2 z-[4000] flex flex-col gap-3 w-[90%] max-w-[400px] pointer-events-none; }
+        .custom-toast { @apply bg-white dark:bg-slate-800 rounded-xl p-4 shadow-xl flex items-center gap-3 border-l-4 pointer-events-auto text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700; animation: slideDown 0.4s ease forwards, fadeOut 0.4s ease 3s forwards; }
+        .custom-toast.success { @apply border-l-emerald-500; } .custom-toast.error { @apply border-l-red-500; } .custom-toast.info { @apply border-l-blue-500; }
+        @keyframes slideDown { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } } 
+        @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; display: none; } }
+
+        /* الأزرار العلوية العائمة */
+        .icon-btn { @apply w-10 h-10 rounded-full flex justify-center items-center cursor-pointer border transition-all; }
         
-        .login-bg { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);}
-        .login-card { background: var(--surface); border-radius: 24px; padding: 2.5rem 2rem; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); position: relative;}
-
-        /* الجداول والنوافذ */
-        .schedule-wrapper { overflow-x: auto; border-radius: 12px; background: var(--surface); border: 1px solid var(--border-color); -webkit-overflow-scrolling: touch; }
-        .schedule-table { width: 100%; min-width: 600px; border-collapse: collapse; }
-        .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 0.875rem 0.5rem; text-align: center; color: var(--text-main); }
-        .schedule-table th { background-color: var(--input-bg); font-weight: 600; color: var(--text-muted); }
-        .schedule-cell.filled { background-color: var(--nav-active-bg); color: var(--primary); font-weight: 600; }
-
-        .bottom-sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(2px);}
-        .bottom-sheet-overlay.active { opacity: 1; pointer-events: auto; }
-        .bottom-sheet-content { background: var(--surface); color: var(--text-main); width: 100%; max-height: 90vh; overflow-y: auto; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 2rem 1.5rem; transform: translateY(100%); transition: transform 0.3s ease-out; }
-        .bottom-sheet-overlay.active .bottom-sheet-content { transform: translateY(0); }
-        .sheet-handle { width: 40px; height: 5px; background: var(--border-color); border-radius: 10px; margin: -1rem auto 1.5rem auto; }
-
-        #loader-overlay { position: fixed; inset: 0; background: var(--surface); z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.3s; }
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; pointer-events: none; }
-        .custom-toast { background: var(--surface); border-radius: 12px; padding: 12px 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; animation: slideDown 0.4s ease forwards, fadeOut 0.4s ease 3s forwards; pointer-events: auto; border: 1px solid var(--border-color); color: var(--text-main); }
-        @keyframes slideDown { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } } @keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; display: none; } }
-
-        /* أزرار الإعدادات العائمة */
-        .settings-float { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; }
-        body[dir="rtl"] .settings-float { right: auto; left: 1rem; }
-        .icon-btn { background: var(--input-bg); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 1px solid var(--border-color); transition: 0.2s; }
-        .icon-btn:hover { background: var(--border-color); }
+        /* تأثيرات الشاشات */
+        #loader-overlay { @apply fixed inset-0 bg-white/95 dark:bg-slate-900/95 z-[3000] flex flex-col items-center justify-center transition-opacity duration-300 backdrop-blur-md; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
 
-    <!-- التنبيهات والتحميل -->
     <div id="toast-container"></div>
+    
     <div id="loader-overlay" class="hidden-section">
-        <i class="fas fa-circle-notch fa-spin text-4xl text-blue-600 mb-4"></i>
-        <h2 class="text-lg font-semibold" data-i18n="loading">Caricamento in corso...</h2>
+        <div class="relative w-16 h-16 mb-4">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-slate-700"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-200" data-i18n="loading">Caricamento in corso...</h2>
     </div>
 
-    <!-- شاشة تسجيل الدخول الرسمية -->
-    <div id="login-screen" class="login-bg hidden-section">
-        <div class="login-card">
-            <!-- أزرار تغيير اللغة والمظهر -->
-            <div class="settings-float">
-                <button onclick="toggleTheme()" class="icon-btn btn-touch" id="theme-icon"><i class="fas fa-moon"></i></button>
-                <button onclick="toggleLang()" class="icon-btn btn-touch font-bold text-xs" id="lang-icon">AR</button>
+    <!-- نافذة التأكيد -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/50 dark:bg-black/70 z-[2000] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl w-[90%] max-w-[380px] text-center shadow-2xl transform scale-95 transition-transform duration-200 border border-slate-100 dark:border-slate-700" id="confirm-box">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-5">
+                <i class="fas fa-exclamation-circle text-3xl text-red-500 dark:text-red-400"></i>
+            </div>
+            <h3 id="confirm-msg" class="font-bold text-slate-800 dark:text-white text-xl mb-6">Sei sicuro?</h3>
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()" class="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold py-3 rounded-xl btn-touch hover:bg-slate-200 dark:hover:bg-slate-600" data-i18n="cancel">Annulla</button>
+                <button id="confirm-btn-yes" class="flex-1 bg-red-600 text-white font-semibold py-3 rounded-xl btn-touch hover:bg-red-700 shadow-lg shadow-red-600/30" data-i18n="confirm">Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 hidden-section relative overflow-hidden">
+        <!-- دوائر تجميلية في الخلفية -->
+        <div class="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-[2rem] p-8 md:p-10 w-full max-w-[420px] text-center shadow-2xl relative z-10">
+            
+            <div class="absolute top-6 right-6 flex gap-2" dir="ltr">
+                <button onclick="toggleTheme()" class="icon-btn bg-slate-100 dark:bg-slate-700 border-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 btn-touch" id="theme-icon"><i class="fas fa-moon"></i></button>
+                <button onclick="toggleLang()" class="icon-btn bg-indigo-100 dark:bg-indigo-900/50 border-transparent text-indigo-700 dark:text-indigo-400 font-bold text-xs hover:bg-indigo-200 dark:hover:bg-indigo-900 btn-touch" id="lang-icon">AR</button>
             </div>
 
-            <div class="bg-blue-50 w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 mt-4">
-                <i class="fas fa-graduation-cap text-4xl text-blue-600"></i>
+            <div class="bg-gradient-to-tr from-indigo-100 to-blue-50 dark:from-indigo-900/40 dark:to-blue-900/20 w-24 h-24 mx-auto rounded-[1.5rem] flex items-center justify-center mb-6 mt-8 shadow-inner border border-white dark:border-slate-700">
+                <i class="fas fa-graduation-cap text-5xl text-indigo-600 dark:text-indigo-400"></i>
             </div>
-            <h1 class="text-2xl font-bold mb-2" data-i18n="app_title">Accademia del Successo</h1>
-            <p class="text-sm mb-8" style="color: var(--text-muted);" data-i18n="portal_desc">Portale Ufficiale di Accesso</p>
             
-            <!-- زر جوجل الرسمي الوحيد -->
+            <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight" data-i18n="app_title">Accademia del Successo</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-10 font-medium" data-i18n="portal_desc">Portale Ufficiale di Accesso</p>
+            
             <div id="g_id_onload" data-client_id="1018216640680-80fo3j734dq1slms7rf392sbgeo28f8n.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
             <div class="g_id_signin flex justify-center w-full" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular"></div>
         </div>
@@ -118,18 +128,19 @@
 
     <!-- المنصة الرئيسية -->
     <div id="main-dashboard" class="hidden-section">
-        <header class="app-header flex justify-between items-center">
+        
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-40 flex justify-between items-center transition-colors">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-100 p-2.5 rounded-full text-blue-600"><i class="fas fa-user"></i></div>
+                <div class="bg-gradient-to-r from-indigo-500 to-blue-600 text-white p-2.5 rounded-xl shadow-md"><i class="fas fa-user"></i></div>
                 <div>
-                    <h2 id="user-name-display" class="font-bold text-sm leading-tight">Nome Utente</h2>
-                    <span id="user-role-badge" class="text-xs font-medium" style="color: var(--text-muted);">Ruolo</span>
+                    <h2 id="user-name-display" class="font-bold text-sm text-slate-800 dark:text-white leading-tight">Nome Utente</h2>
+                    <span id="user-role-badge" class="text-xs font-medium text-slate-500 dark:text-slate-400">Ruolo</span>
                 </div>
             </div>
             <div class="flex gap-2">
-                <button onclick="toggleTheme()" class="icon-btn btn-touch"><i class="fas fa-moon" id="header-theme-icon"></i></button>
-                <button onclick="toggleLang()" class="icon-btn btn-touch font-bold text-xs" id="header-lang-icon">AR</button>
-                <button onclick="logout()" class="icon-btn btn-touch text-red-500 hover:bg-red-50 hover:border-red-200"><i class="fas fa-sign-out-alt"></i></button>
+                <button onclick="toggleTheme()" class="icon-btn bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 btn-touch"><i class="fas fa-moon" id="header-theme-icon"></i></button>
+                <button onclick="toggleLang()" class="icon-btn bg-indigo-50 dark:bg-indigo-900/30 border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 font-bold text-xs btn-touch" id="header-lang-icon">AR</button>
+                <button onclick="logout()" class="icon-btn bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/50 text-red-600 dark:text-red-400 btn-touch"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
 
@@ -137,65 +148,63 @@
             
             <!-- [1] الإدارة -->
             <div id="view-admin" class="hidden-section pb-20">
-                <h2 class="text-xl font-bold mb-5 flex items-center gap-2"><i class="fas fa-users-cog text-blue-600"></i> <span data-i18n="admin_area">Gestione Utenze</span></h2>
-                <div class="mobile-card border-t-4 border-t-blue-500">
-                    <h3 class="font-semibold mb-4" data-i18n="new_user">Nuovo Utente</h3>
+                <h2 class="text-2xl font-bold mb-6 text-slate-800 dark:text-white flex items-center gap-3"><div class="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-600 dark:text-blue-400"><i class="fas fa-users-cog"></i></div> <span data-i18n="admin_area">Gestione Utenze</span></h2>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-8">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i class="fas fa-plus-circle text-emerald-500"></i> <span data-i18n="new_user">Nuovo Utente</span></h3>
                     <div>
-                        <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="name_label">Nome e Cognome</label>
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="name_label">Nome e Cognome</label>
                         <input type="text" id="add-user-name" class="mobile-input">
                     </div>
                     <div class="mt-4">
-                        <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="email_label">Indirizzo Email</label>
-                        <input type="email" id="add-user-email" class="mobile-input" style="direction: ltr; text-align: left;">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="email_label">Indirizzo Email</label>
+                        <input type="email" id="add-user-email" class="mobile-input" dir="ltr" style="text-align: left;">
                     </div>
                     <div class="mt-4">
-                        <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="role_label">Ruolo</label>
-                        <select id="add-user-role" class="mobile-input">
+                        <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="role_label">Ruolo</label>
+                        <select id="add-user-role" class="mobile-input appearance-none">
                             <option value="student" data-i18n="role_student">Studente</option>
                             <option value="teacher" data-i18n="role_teacher">Docente</option>
                             <option value="admin" data-i18n="role_admin">Amministratore</option>
                         </select>
                     </div>
-                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-blue-600 text-white font-medium py-3 rounded-xl" data-i18n="btn_register">Registra Utente</button>
+                    <button onclick="addUser()" class="btn-touch w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-600/20" data-i18n="btn_register">Registra Utente</button>
                 </div>
-                <h3 class="font-semibold mt-8 mb-4 ml-1" data-i18n="reg_users">Utenti Registrati</h3>
+
+                <h3 class="font-bold mb-4 text-slate-800 dark:text-white" data-i18n="reg_users">Utenti Registrati</h3>
                 <div id="admin-users-list" class="space-y-3"></div>
             </div>
 
             <!-- [2] الواجبات للمعلم -->
             <div id="view-homework-manage" class="hidden-section pb-20">
-                <div class="flex p-1 rounded-xl mb-6" style="background: var(--border-color);">
-                    <button onclick="switchTeacherTab('publish')" id="tab-t-publish" class="flex-1 py-2 font-medium rounded-lg text-sm bg-white text-blue-600 shadow-sm" data-i18n="tab_assign">Assegna Compito</button>
-                    <button onclick="switchTeacherTab('track')" id="tab-t-track" class="flex-1 py-2 font-medium rounded-lg text-sm text-slate-500 bg-transparent" data-i18n="tab_track">Consegne</button>
+                <div class="flex p-1.5 rounded-xl mb-6 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <button onclick="switchTeacherTab('publish')" id="tab-t-publish" class="flex-1 py-2.5 font-semibold rounded-lg text-sm bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all" data-i18n="tab_assign">Assegna Compito</button>
+                    <button onclick="switchTeacherTab('track')" id="tab-t-track" class="flex-1 py-2.5 font-semibold rounded-lg text-sm text-slate-500 dark:text-slate-400 bg-transparent transition-all" data-i18n="tab_track">Consegne</button>
                 </div>
 
                 <div id="teacher-publish-view">
-                    <div class="mobile-card border-t-4 border-t-indigo-500">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <div>
-                            <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="task_title">Titolo dell'Attività</label>
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="task_title">Titolo dell'Attività</label>
                             <input type="text" id="hw-title" class="mobile-input">
                         </div>
                         <div class="mt-4">
-                            <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="deadline">Data di Scadenza</label>
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="deadline">Data di Scadenza</label>
                             <input type="date" id="hw-date" class="mobile-input">
                         </div>
                         <div class="mt-4">
-                            <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="class_label">Classe</label>
-                            <select id="hw-grade" class="mobile-input">
-                                <!-- سيتم ملؤه بواسطة الجافاسكريبت حسب اللغة -->
-                            </select>
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="class_label">Classe</label>
+                            <select id="hw-grade" class="mobile-input appearance-none"></select>
                         </div>
                         <div class="mt-4">
-                            <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="subject_label">Materia</label>
-                            <select id="hw-subject" class="mobile-input">
-                                <!-- سيتم ملؤه بواسطة الجافاسكريبت حسب اللغة -->
-                            </select>
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="subject_label">Materia</label>
+                            <select id="hw-subject" class="mobile-input appearance-none"></select>
                         </div>
                         <div class="mt-4">
-                            <label class="text-xs font-semibold uppercase tracking-wider ml-1" style="color: var(--text-muted);" data-i18n="instructions">Istruzioni</label>
-                            <textarea id="hw-desc" rows="3" class="mobile-input resize-none"></textarea>
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1" data-i18n="instructions">Istruzioni</label>
+                            <textarea id="hw-desc" rows="4" class="mobile-input resize-none"></textarea>
                         </div>
-                        <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 text-white font-medium py-3 rounded-xl shadow-sm" data-i18n="btn_publish">Pubblica Attività</button>
+                        <button onclick="addHomework()" class="btn-touch w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-indigo-600/20" data-i18n="btn_publish">Pubblica Attività</button>
                     </div>
                 </div>
                 <div id="teacher-track-view" class="hidden-section"><div id="teacher-hw-list" class="space-y-4"></div></div>
@@ -203,43 +212,46 @@
 
             <!-- [3] الجدول -->
             <div id="view-schedule-manage" class="hidden-section pb-20">
-                <h2 class="text-xl font-bold mb-5 flex items-center gap-2"><i class="far fa-calendar-alt text-emerald-500"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
-                <div id="schedule-controls" class="mobile-card border-t-4 border-t-emerald-500 mb-6">
-                    <div class="grid grid-cols-2 gap-3">
+                <h2 class="text-2xl font-bold mb-6 text-slate-800 dark:text-white flex items-center gap-3"><div class="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg text-emerald-600 dark:text-emerald-400"><i class="far fa-calendar-alt"></i></div> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
+                
+                <div id="schedule-controls" class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/50 rounded-2xl p-5 mb-8">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-xs font-semibold uppercase" style="color: var(--text-muted);" data-i18n="day_label">Giorno</label>
-                            <select id="sch-day" class="mobile-input py-2 mt-1"></select>
+                            <label class="text-xs font-bold uppercase text-slate-600 dark:text-slate-400" data-i18n="day_label">Giorno</label>
+                            <select id="sch-day" class="mobile-input appearance-none py-2.5"></select>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold uppercase" style="color: var(--text-muted);" data-i18n="hour_label">Ora</label>
-                            <select id="sch-slot" class="mobile-input py-2 mt-1"></select>
+                            <label class="text-xs font-bold uppercase text-slate-600 dark:text-slate-400" data-i18n="hour_label">Ora</label>
+                            <select id="sch-slot" class="mobile-input appearance-none py-2.5"></select>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <label class="text-xs font-semibold uppercase" style="color: var(--text-muted);" data-i18n="subj_class">Materia e Classe</label>
-                        <input type="text" id="sch-subject" class="mobile-input py-2 mt-1">
+                    <div class="mt-4">
+                        <label class="text-xs font-bold uppercase text-slate-600 dark:text-slate-400" data-i18n="subj_class">Materia e Classe</label>
+                        <input type="text" id="sch-subject" class="mobile-input py-2.5">
                     </div>
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="addScheduleSlot()" class="btn-touch flex-grow bg-emerald-600 text-white font-medium py-2 rounded-xl" data-i18n="btn_save">Salva Modifica</button>
-                        <button onclick="clearSchedule()" class="btn-touch w-12 bg-red-50 text-red-500 border border-red-200 rounded-xl"><i class="fas fa-trash-alt"></i></button>
+                    <div class="flex gap-3 mt-5">
+                        <button onclick="addScheduleSlot()" class="btn-touch flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-emerald-600/20" data-i18n="btn_save">Salva Modifica</button>
+                        <button onclick="clearSchedule()" class="btn-touch w-14 bg-white dark:bg-slate-800 text-red-500 border border-red-200 dark:border-red-900 rounded-xl flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20"><i class="fas fa-trash-alt text-lg"></i></button>
                     </div>
                 </div>
-                <h3 class="font-semibold mb-3 ml-1" data-i18n="current_schedule">Orario Attuale</h3>
+                
+                <h3 class="font-bold mb-4 text-slate-800 dark:text-white" data-i18n="current_schedule">Orario Attuale</h3>
                 <div id="manage-schedule-container"></div>
             </div>
 
             <!-- [4] الطالب -->
             <div id="view-student" class="hidden-section pb-20">
-                <div class="flex p-1 rounded-xl mb-6" style="background: var(--border-color);">
-                    <button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2 font-medium rounded-lg text-sm bg-white text-blue-600 shadow-sm" data-i18n="tab_assigned">Attività Assegnate</button>
-                    <button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2 font-medium rounded-lg text-sm text-slate-500 bg-transparent" data-i18n="tab_schedule">Orario Lezioni</button>
+                <div class="flex p-1.5 rounded-xl mb-6 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <button onclick="switchStudentTab('hw')" id="tab-hw" class="flex-1 py-2.5 font-semibold rounded-lg text-sm bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all" data-i18n="tab_assigned">Attività Assegnate</button>
+                    <button onclick="switchStudentTab('sch')" id="tab-sch" class="flex-1 py-2.5 font-semibold rounded-lg text-sm text-slate-500 dark:text-slate-400 bg-transparent transition-all" data-i18n="tab_schedule">Orario Lezioni</button>
                 </div>
                 <div id="student-hw-list" class="space-y-4"></div>
                 <div id="student-schedule-view" class="hidden-section"><div id="display-schedule-container"></div></div>
             </div>
         </main>
         
-        <nav id="bottom-nav" class="bottom-nav"></nav>
+        <!-- الشريط السفلي -->
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 flex justify-around p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] z-50 transition-colors"></nav>
     </div>
 
     <!-- النوافذ المنبثقة -->
@@ -247,47 +259,53 @@
         <div class="bottom-sheet-content">
             <div class="sheet-handle"></div>
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold" data-i18n="submit_task">Consegna Elaborato</h3>
-                <button onclick="closeSheet('submit-sheet')" class="icon-btn btn-touch"><i class="fas fa-times"></i></button>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="submit_task">Consegna Elaborato</h3>
+                <button onclick="closeSheet('submit-sheet')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 btn-touch"><i class="fas fa-times"></i></button>
             </div>
             <div class="space-y-5">
-                <div class="p-3 rounded-xl" style="background: var(--input-bg); border: 1px solid var(--border-color);"><p id="sheet-hw-title" class="font-medium text-blue-600 text-sm"></p></div>
+                <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50">
+                    <p id="sheet-hw-title" class="font-semibold text-indigo-700 dark:text-indigo-300 text-sm"></p>
+                </div>
                 <div>
-                    <label class="block font-medium text-sm mb-2" data-i18n="text_note">Testo / Note:</label>
+                    <label class="block font-semibold text-sm text-slate-700 dark:text-slate-300 mb-2" data-i18n="text_note">Testo / Note:</label>
                     <textarea id="submit-text" class="mobile-input resize-none" rows="4"></textarea>
                 </div>
                 <div>
-                    <label class="block font-medium text-sm mb-2" data-i18n="attach_file">Allega File:</label>
-                    <div class="relative border-2 border-dashed rounded-xl p-5 text-center transition cursor-pointer" style="border-color: var(--border-color); background: var(--input-bg);">
+                    <label class="block font-semibold text-sm text-slate-700 dark:text-slate-300 mb-2" data-i18n="attach_file">Allega File:</label>
+                    <div class="relative border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center transition cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-slate-50 dark:bg-slate-900">
                         <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)" accept=".pdf, image/*">
-                        <i class="fas fa-cloud-upload-alt text-2xl mb-2" style="color: var(--text-muted);"></i>
-                        <p id="file-name-display" class="text-sm font-medium text-blue-600" data-i18n="tap_file">Tocca per selezionare un file</p>
+                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-indigo-500 dark:text-indigo-400"></i>
+                        </div>
+                        <p id="file-name-display" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400" data-i18n="tap_file">Tocca per selezionare un file</p>
                     </div>
                 </div>
-                <button id="confirm-submit-btn" onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 text-white font-medium py-3.5 rounded-xl mt-2" data-i18n="btn_send">Invia Consegna</button>
+                <button id="confirm-submit-btn" onclick="confirmSubmission()" class="btn-touch w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-xl mt-2 shadow-lg shadow-emerald-600/20" data-i18n="btn_send">Invia Consegna</button>
             </div>
         </div>
     </div>
 
+    <!-- نافذة المعلم -->
     <div id="teacher-view-sheet" class="bottom-sheet-overlay">
-        <div class="bottom-sheet-content" style="max-height: 95vh; display: flex; flex-direction: column;">
-            <div class="sheet-handle"></div>
-            <div class="flex justify-between items-center mb-4 pb-3 shrink-0" style="border-bottom: 1px solid var(--border-color);">
-                <h3 class="text-lg font-bold text-blue-600" data-i18n="teacher_view_subs">Elaborati Ricevuti</h3>
-                <button onclick="closeSheet('teacher-view-sheet')" class="icon-btn btn-touch"><i class="fas fa-times"></i></button>
+        <div class="bottom-sheet-content !max-h-[95vh] flex flex-col">
+            <div class="sheet-handle shrink-0"></div>
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="teacher_view_subs">Elaborati Ricevuti</h3>
+                <button onclick="closeSheet('teacher-view-sheet')" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 btn-touch"><i class="fas fa-times"></i></button>
             </div>
-            <div id="submissions-container" class="space-y-3 overflow-y-auto flex-grow pb-10"></div>
+            <div id="submissions-container" class="space-y-4 overflow-y-auto flex-grow pb-10"></div>
         </div>
     </div>
 
-    <div id="file-viewer-modal" class="bottom-sheet-overlay" style="z-index: 2000;">
-        <div class="bottom-sheet-content" style="height: 95vh; display: flex; flex-direction: column; padding: 1.5rem 1rem;">
-            <div class="sheet-handle"></div>
+    <!-- قارئ الملفات -->
+    <div id="file-viewer-modal" class="bottom-sheet-overlay z-[2000]">
+        <div class="bottom-sheet-content !max-h-[95vh] !h-[95vh] flex flex-col !p-4 md:!p-6">
+            <div class="sheet-handle shrink-0"></div>
             <div class="flex justify-between items-center mb-4 shrink-0">
-                <h3 class="font-bold truncate pr-2" data-i18n="file_viewer">Visualizzatore</h3>
-                <button onclick="closeSheet('file-viewer-modal')" class="px-3 py-1.5 rounded-lg text-sm font-medium btn-touch" style="background: var(--input-bg); border: 1px solid var(--border-color);" data-i18n="close">Chiudi</button>
+                <h3 class="font-bold text-slate-800 dark:text-white truncate pr-2 text-lg" data-i18n="file_viewer">Visualizzatore</h3>
+                <button onclick="closeSheet('file-viewer-modal')" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold btn-touch" data-i18n="close">Chiudi</button>
             </div>
-            <div id="file-viewer-container" class="flex-grow w-full rounded-xl overflow-hidden flex items-center justify-center" style="background: var(--input-bg);"></div>
+            <div id="file-viewer-container" class="flex-grow w-full bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-800"></div>
         </div>
     </div>
 
