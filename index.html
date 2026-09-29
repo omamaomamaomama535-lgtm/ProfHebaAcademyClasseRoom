@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" dir="ltr" id="html-root">
+<html lang="it" dir="ltr" id="html-root" class="bg-slate-50 dark:bg-slate-950">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -26,12 +26,26 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
-        /* منع الصفحة من التحرك يمين وشمال نهائياً */
-        html, body { 
+        /* تفعيل تأثير المط (Bounce) الاحترافي مع دمج لون الخلفية */
+        html {
+            background-color: #f8fafc;
+            transition: background-color 0.3s;
+            overscroll-behavior-y: auto;
+        }
+        html.dark {
+            background-color: #020617; /* Slate 950 */
+        }
+        
+        /* منع الصفحة من التحرك يمين وشمال مع ضمان مرونة السحب الرأسي */
+        body { 
             max-width: 100vw; 
             overflow-x: hidden; 
-            transition: background-color 0.3s, color 0.3s; 
+            overflow-y: auto;
+            min-height: 101vh; /* خدعة لإجبار المتصفح على تفعيل الأنيميشن المطاطي دائماً */
+            -webkit-overflow-scrolling: touch; /* سحب ناعم جداً على الهواتف */
+            transition: color 0.3s; 
             padding-bottom: 90px; 
+            background: transparent;
         }
 
         .app-screen { display: none; }
@@ -50,11 +64,11 @@
         .schedule-table { @apply w-full min-w-[600px]; }
         .schedule-table th, .schedule-table td { @apply border border-slate-200 dark:border-slate-700 p-3 text-center whitespace-nowrap h-[70px]; }
         .schedule-table th { @apply bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold; }
-        .schedule-cell { @apply bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-sm; }
+        .schedule-cell { @apply bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 text-sm transition-colors; }
         .schedule-cell.filled-cell { @apply bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-bold; }
         .schedule-cell.clickable:hover { @apply bg-gray-50 dark:bg-gray-800 cursor-pointer; }
 
-        /* النوافذ المنبثقة المستقرة */
+        /* النوافذ المنبثقة */
         .custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
         .custom-modal.active { display: flex; }
         .custom-modal-content { width: 100%; max-width: 700px; max-height: 90vh; background: white; border-radius: 24px 24px 0 0; padding: 24px; overflow-y: auto; animation: slideUp 0.3s ease-out forwards; }
@@ -69,11 +83,10 @@
         @keyframes slideDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } } 
         @keyframes fadeOut { 100% { opacity: 0; display: none; } }
 
-        /* التحميل */
         #loader-overlay { @apply fixed inset-0 bg-white/90 dark:bg-slate-900/90 z-[10000] flex flex-col items-center justify-center backdrop-blur-sm; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<body class="text-slate-900 dark:text-slate-100">
 
     <div id="toast-container"></div>
     <div id="loader-overlay" style="display: none;">
@@ -95,7 +108,6 @@
 
     <!-- ================= شاشة تسجيل الدخول ================= -->
     <div id="screen-login" class="app-screen active">
-        <!-- أضفنا overflow-hidden هنا لمنع تأثير الدوائر من توسيع الشاشة -->
         <div class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
             
             <div class="absolute top-6 right-6 flex gap-2 z-20" dir="ltr">
@@ -180,8 +192,8 @@
             <!-- [3] الجدول التفاعلي -->
             <div id="view-schedule" class="app-view">
                 <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-xl font-bold flex items-center gap-2"><i class="far fa-calendar-alt text-primary"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
-                    <!-- زر مسح الجدول يظهر فقط للإدارة والمعلمين -->
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i class="far fa-calendar-alt text-emerald-500"></i> <span data-i18n="schedule_title">Orario delle Lezioni</span></h2>
+                    <!-- زر مسح الجدول -->
                     <button id="btn-clear-schedule" onclick="clearSchedule()" class="bg-red-100 dark:bg-red-900/30 text-red-500 px-3 py-1.5 rounded-lg text-sm font-bold btn-touch" style="display:none;"><i class="fas fa-trash"></i> <span data-i18n="clear_sch">Svuota</span></button>
                 </div>
                 <p id="schedule-hint" class="text-sm text-gray-500 mb-4" style="display:none;" data-i18n="click_to_edit">Tocca un riquadro per modificare la materia.</p>
@@ -197,13 +209,12 @@
                 <div id="student-hw-box" class="block"><div id="student-hw-list" class="space-y-4"></div></div>
                 <div id="student-schedule-box" class="hidden"><div class="w-full overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800" id="display-schedule-container"></div></div>
             </div>
-
         </main>
         
-        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-3 z-40"></nav>
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around p-3 z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]"></nav>
     </div>
 
-    <!-- ================= النوافذ المنبثقة المستقرة ================= -->
+    <!-- ================= النوافذ المنبثقة ================= -->
     
     <!-- 1. نافذة التعديل السريع للمربع في الجدول -->
     <div id="modal-edit-cell" class="custom-modal">
@@ -231,7 +242,6 @@
             <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl mb-4 text-primary font-bold text-sm" id="sheet-hw-title"></div>
             <label class="block font-bold text-sm mb-2" data-i18n="text_note">Testo / Note:</label>
             <textarea id="submit-text" class="custom-input mb-4 resize-none" rows="3"></textarea>
-            
             <label class="block font-bold text-sm mb-2" data-i18n="attach_file">Allega File:</label>
             <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center bg-gray-50 dark:bg-gray-800 mb-4 cursor-pointer">
                 <input type="file" id="submit-file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="updateFileName(this)" accept=".pdf, image/*">
@@ -254,7 +264,7 @@
         </div>
     </div>
 
-    <!-- 4. نافذة قراءة الملفات -->
+    <!-- 4. نافذة عرض الصور / PDF -->
     <div id="modal-viewer" class="custom-modal z-[11000]">
         <div class="custom-modal-content flex flex-col h-[95vh] !p-4">
             <div class="flex justify-between items-center mb-4 shrink-0">
@@ -279,7 +289,7 @@
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.firestore();
 
-        // ================= المتغيرات واللغات =================
+        // ================= المتغيرات العامة وقواعد البيانات =================
         let homeworks = []; let scheduleData = {}; let allowedUsers = []; 
         let currentUser = null; let activeHwId = null; let activeCellKey = null;
         let currentLang = localStorage.getItem('appLang') || 'it';
@@ -313,19 +323,19 @@
                 subjects: ["Italiano", "Matematica", "Storia", "Geografia", "Inglese", "Scienze", "Arte", "Tecnologia", "Musica", "Ed. Fisica", "Religione", "Fisica", "Chimica", "Informatica", "Altro"],
                 grades: { "Scuola Primaria": ["1ª Primaria", "2ª Primaria", "3ª Primaria", "4ª Primaria", "5ª Primaria"], "Scuola Media": ["1ª Media", "2ª Media", "3ª Media"], "Scuola Superiore": ["1ª Superiore", "2ª Superiore", "3ª Superiore", "4ª Superiore", "5ª Superiore"] },
                 days: ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], 
-                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] // الساعات
+                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] 
             },
             ar: {
                 subjects: ["الإيطالية", "الرياضيات", "التاريخ", "الجغرافيا", "الإنجليزية", "العلوم", "الفنون", "التكنولوجيا", "الموسيقى", "التربية البدنية", "الدين", "الفيزياء", "الكيمياء", "معلوماتية", "أخرى"],
                 grades: { "الابتدائية": ["الأول الابتدائي", "الثاني الابتدائي", "الثالث الابتدائي", "الرابع الابتدائي", "الخامس الابتدائي"], "المتوسطة": ["الأول المتوسط", "الثاني المتوسط", "الثالث المتوسط"], "الثانوية": ["الأول الثانوي", "الثاني الثانوي", "الثالث الثانوي", "الرابع الثانوي", "الخامس الثانوي"] },
                 days: ["الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], 
-                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] // الساعات
+                slots: ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00"] 
             }
         };
 
         function t(key) { return i18n[currentLang][key] || key; }
 
-        // ================= التهيئة =================
+        // ================= الإعدادات الأساسية =================
         document.addEventListener('DOMContentLoaded', () => {
             applyTheme(isDarkMode); applyLanguage(currentLang);
         });
@@ -334,7 +344,8 @@
         function applyTheme(dark) {
             if (dark) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark');
             let ic = dark ? 'fas fa-sun text-yellow-500' : 'fas fa-moon';
-            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`; document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
+            document.getElementById('theme-btn-login').innerHTML = `<i class="${ic}"></i>`;
+            document.getElementById('theme-btn-main').innerHTML = `<i class="${ic}"></i>`;
         }
 
         window.toggleLang = function() { currentLang = currentLang === 'it' ? 'ar' : 'it'; localStorage.setItem('appLang', currentLang); applyLanguage(currentLang); }
@@ -363,7 +374,7 @@
             let gh = `<option value="">- ${t('class_label')} -</option>`; for (const [group, grades] of Object.entries(data.grades)) { gh += `<optgroup label="${group}">`; grades.forEach(g => gh += `<option value="${g}">${g}</option>`); gh += `</optgroup>`; } document.getElementById('hw-grade').innerHTML = gh;
         }
 
-        // ================= النوافذ =================
+        // ================= الإشعارات والنوافذ =================
         function showToast(msg, type='success') {
             const container = document.getElementById('toast-container'); const toast = document.createElement('div');
             let icon = type === 'success' ? '<i class="fas fa-check-circle text-emerald-500 text-xl"></i>' : '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
@@ -374,14 +385,18 @@
         function hideLoader() { document.getElementById('loader-overlay').classList.add('hidden'); document.getElementById('loader-overlay').classList.remove('flex'); }
 
         let confirmCallback = null;
-        function showConfirm(msg, callback) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex'); confirmCallback = callback; }
-        window.closeConfirmModal = function() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
+        function showConfirm(msg, callback) {
+            document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('confirm-modal').classList.remove('hidden'); document.getElementById('confirm-modal').classList.add('flex');
+            confirmCallback = callback;
+        }
+        function closeConfirmModal() { document.getElementById('confirm-modal').classList.add('hidden'); document.getElementById('confirm-modal').classList.remove('flex'); }
         document.getElementById('confirm-yes-btn').addEventListener('click', () => { closeConfirmModal(); if(confirmCallback) confirmCallback(); });
 
         window.openModal = function(id) { document.getElementById(id).classList.add('active'); }
         window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ================= الدخول =================
+        // ================= تسجيل الدخول وقاعدة البيانات =================
         function parseJwt(token) { var base64Url = token.split('.')[1]; var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(window.atob(base64).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''))); }
 
         async function fetchServerData() {
@@ -390,7 +405,7 @@
                 const hSnap = await db.collection('homeworks').get(); homeworks = hSnap.docs.map(doc => doc.data());
                 const sDoc = await db.collection('settings').doc('schedule').get(); if (sDoc.exists) scheduleData = sDoc.data();
                 return true;
-            } catch (error) { showToast("Error connecting to database", "error"); return false; }
+            } catch (error) { showToast("Database Connection Error", "error"); return false; }
         }
 
         window.handleGoogleLogin = async function(response) {
@@ -407,8 +422,14 @@
             if (user) loginAs(user.role, user.name || name, email); else showToast("Access Denied.", "error");
         }
 
-        function switchScreen(screenId) { document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); }
-        function switchView(viewId) { document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active')); document.getElementById(viewId).classList.add('active'); }
+        function switchScreen(screenId) {
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+        function switchView(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
 
         function loginAs(role, name, email) {
             currentUser = { role, name, email };
@@ -423,13 +444,16 @@
         }
         window.logout = function() { currentUser = null; switchScreen('screen-login'); }
 
-        // ================= التنقل =================
+        // ================= شريط التنقل السفلي =================
         function buildBottomNav() {
             const nav = document.getElementById('bottom-nav'); nav.innerHTML = '';
-            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer transition-colors" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
+            const cItem = (id, icon, text, target) => `<div class="flex flex-col items-center justify-center w-full text-gray-400 cursor-pointer" id="${id}" onclick="navigateTo('${target}', '${id}')"><i class='fas ${icon} text-xl mb-1'></i><span class="text-[10px] font-bold">${text}</span></div>`;
 
             if(currentUser.role === 'admin') nav.innerHTML += cItem('nav-admin', 'fa-shield-alt', t('nav_admin'), 'view-admin');
-            if(currentUser.role === 'admin' || currentUser.role === 'teacher') { nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher'); nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule'); }
+            if(currentUser.role === 'admin' || currentUser.role === 'teacher') {
+                nav.innerHTML += cItem('nav-hw', 'fa-book', t('nav_hw'), 'view-teacher');
+                nav.innerHTML += cItem('nav-sch', 'fa-calendar-alt', t('nav_sch'), 'view-schedule');
+            }
             if(currentUser.role === 'student') nav.innerHTML += cItem('nav-student', 'fa-home', t('nav_home'), 'view-student');
         }
 
@@ -487,7 +511,7 @@
 
         function renderTeacherTracking() {
             let html = ''; let sortedHw = [...homeworks].sort((a, b) => b.timestamp - a.timestamp);
-            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400 font-bold">${t('no_tasks')}</div>`; return; }
+            if(sortedHw.length === 0) { document.getElementById('teacher-hw-list').innerHTML = `<div class="text-center py-10 text-gray-400">${t('no_tasks')}</div>`; return; }
             sortedHw.forEach(hw => {
                 let subCount = hw.submissions ? hw.submissions.length : 0;
                 let badge = subCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
@@ -612,6 +636,11 @@
 
             if (file) { let reader = new FileReader(); reader.onload = function(e) { saveToDb(e.target.result, file.type, file.name); }; reader.readAsDataURL(file); } else { saveToDb(); }
         }
+
+        // منع النوافذ من الإغلاق عند النقر بداخلها، وإغلاقها عند النقر في الخارج
+        document.querySelectorAll('.custom-modal').forEach(modal => {
+            modal.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
+        });
     </script>
 </body>
 </html>
